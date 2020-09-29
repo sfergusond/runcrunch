@@ -5,7 +5,6 @@ Created on Wed May 27 17:14:26 2020
 @author: sferg
 """
 import plotly.graph_objects as go
-import statistics as stat
 
 from scripts import helper
 from scripts import constants
@@ -114,7 +113,7 @@ async def laps_barchart(streams, laps, stats, athlete, auto=True):
         rows=[
             list(range(1, numLaps + 1)),
             [f'{round(i*convert[unit][1],2)} {convert[unit][-1]}' if i*convert[unit][1] < .96 or i*convert[unit][1] > 1.03 else f'{round(i*convert[unit][1],1)} {convert[unit][-1]}' for i in laps['dist']],
-            [helper.format_time(laps['dist'][i]/laps['velocity'][i]) if laps['dist'][i]*convert[unit][1] < .97 or laps['dist'][i]*convert[unit][1] > 1.03 else helper.velocity_to_pace(laps['velocity'][i], _to=convert[unit][2]) for i in range(numLaps)],
+            [helper.format_time(laps['dist'][i]/laps['velocity'][i]) if laps['velocity'][i] > 1 and (laps['dist'][i]*convert[unit][1] < .97 or laps['dist'][i]*convert[unit][1] > 1.03) else helper.velocity_to_pace(laps['velocity'][i], _to=convert[unit][2]) for i in range(numLaps)],
             [f"{helper.velocity_to_pace(laps['velocity'][i], _to=convert[unit][2])} /{convert[unit][-1]}" for i in range(numLaps)],
             [f"{helper.velocity_to_pace(laps['gap'][i], _to=convert[unit][2])} /{convert[unit][-1]}" for i in range(numLaps)],
             [f'{int(i*convert[unit][0])} {convert[unit][3]}' for i in laps['total_gain']],

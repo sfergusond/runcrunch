@@ -1,3 +1,6 @@
+/static/
+secrets.txt
+
 # SQLite
 *.sqlite3
 

@@ -158,7 +158,6 @@ def activity_dashboard(athlete, after, before):
                  where=f"a_id = {a_id} AND date BETWEEN '{after}' AND '{before}'", conn=conn)
     runs_dict = helper.organize_dict(runs, 'date')
 
-    # BUG: 1-2 ACTIVITIES ERROR
     # Barcharts
     if runs: # runs != []
         graphs_dict = asyncio.run(dashboard_charts(runs, runs_dict, before, delta, unit))
