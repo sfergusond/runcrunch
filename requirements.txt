@@ -169,7 +169,7 @@ rcssmin==1.0.6
 rjsmin==1.1.0
 python-decouple==3.3
 asyncio==3.4.3
-aiohttp==3.6.2
+aiohttp==3.7.4
 yarl==1.4.2
 django-allauth==0.42.0
 oauthlib==3.1.0
