@@ -91,7 +91,7 @@ pycparser==2.20
 pydantic==1.5.1
 pydocstyle==5.0.2
 pyflakes>=2.1.1
-Pygments==2.6.1
+Pygments==2.7.4
 PyHamcrest==2.0.2
 PyInstaller==3.6
 pylint==2.5.2
