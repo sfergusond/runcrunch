@@ -146,7 +146,7 @@ whitenoise==5.1.0
 wrapt==1.12.1
 yapf==0.30.0
 zope.interface==5.1.0
-autobahn==20.6.1
+autobahn==20.12.3
 channels==2.4.0
 daphne==2.5.0
 pyasn1==0.4.8
