@@ -88,7 +88,7 @@ psycopg2-binary==2.8.5
 ptyprocess==0.6.0
 pycodestyle==2.6.0
 pycparser==2.20
-pydantic==1.5.1
+pydantic==1.6.2
 pydocstyle==5.0.2
 pyflakes>=2.1.1
 Pygments==2.6.1
