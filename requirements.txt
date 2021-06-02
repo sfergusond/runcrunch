@@ -136,7 +136,7 @@ Twisted==20.3.0
 typer==0.1.1
 typing-extensions==3.7.4.2
 units==0.7
-urllib3==1.25.9
+urllib3==1.26.5
 virtualenv==20.0.18
 watchdog==0.10.2
 wcwidth==0.2.2
