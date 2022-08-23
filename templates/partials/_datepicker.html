@@ -1,0 +1,57 @@
+<div class="col-lg">
+  <form action="" method="POST" class="form-group" style="margin-top: -10%">
+    {% csrf_token %}
+    <div class="input-group input-group-merge" style="margin-top:2%">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">From:</span>
+      </div>
+      {{ date_picker.date_start }}
+    </div>
+    <div class="input-group input-group-merge" style="margin-top:2%">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">To:</span>
+      </div>
+      {{ date_picker.date_end }}
+    </div>	
+    <input name="metric" id="metric" type="hidden" value="{{ selected_metric }}" />
+    <button type="submit" name="custom_sub" class="btn btn-success" style="margin-top: 15px">Go</button></button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quick-links" style="margin-top: 15px">Quick Links</button>
+  </form>
+  
+  <!-- Modal -->
+  <div class="modal fade pl-lg-6" id="quick-links" tabindex="-1" role="dialog" aria-labelledby="quick-links-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="quick-links-label">Quick Links</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      </div>
+      <form action="" method="POST" class="form-group">
+      {% csrf_token %}
+      <div class="modal-body">
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        {% for radio in quick_links.quick_links %}
+          <label for="{{ radio.choice_label}}" class="btn btn-secondary">
+            {{radio.choice_label}}
+            {{ radio.tag }}
+          </label>
+        {% endfor %}
+      </div>
+      <div class="input-group" style="margin-top:10%">
+        {{ quick_links.quick_items }}
+        <div class="input-group-append">
+          {{ quick_links.unit }}
+        </div>
+      </div>
+      </div>
+      <div class="modal-footer">
+      <input name="metric" id="metric" type="hidden" value="{{ selected_metric }}" />
+      <button type="submit" name="quick_links_sub" class="btn btn-success">Go</button>
+      </div>
+      </form>
+    </div>
+    </div>
+  </div>
+</div>

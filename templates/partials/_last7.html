@@ -1,0 +1,559 @@
+<!-- Header -->
+
+<div class="header bg-primary py-0">
+	<div class="container-fluid">
+		<div class="header-body">
+			<div class="row align-items-center py-4">
+		
+				<!-- Datepicker -->
+				<div class="col-lg-4">
+					<div class="card card-stats card-info bg-default">
+						<div class="card-body">
+							<div class="row justify-content-md-center">
+								<h2 class="display-2 text-white">Dashboard</h2>
+							</div>
+							<div class="row justify-content-md-center" style="margin-top: 5%; margin-bottom:0px;">
+								<h4 class="display-5 text-white" style="margin-bottom: 0px">{{ info.date_start }} to {{ info.date_end }}</h4>
+							</div>
+							<div class="row justify-content-md-center" style="margin-top: 10%">
+									{% include 'partials/_datepicker.html' %}
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Period Stats -->
+				<div class="col-lg-8">
+					<div class="row justify-content-md-center" style="margin-bottom:7%">
+						<div class="btn-group btn-group-toggle" data-toggle="buttons">
+							<ul class="nav" role="tablist">
+								<li><label class="btn btn-warning active nav-item" id="last7-tab" data-toggle="tab" href="#last7" role="tab" aria-controls="tab" aria-selected="true">Last 7 Days</label></li>
+								<li><label class="btn btn-warning nav-item" id="month-tab" data-toggle="tab" href="#month" role="tab" aria-controls="tab" aria-selected="false">This Month</label></li>
+								<li><label class="btn btn-warning nav-item" id="year-tab" data-toggle="tab" href="#year" role="tab" aria-controls="tab" aria-selected="false">This Year</label></li>
+								<li><label class="btn btn-warning nav-item" id="view-tab" data-toggle="tab" href="#view" role="tab" aria-controls="tab" aria-selected="false">{{ info.date_start_abv }} - {{ info.date_end_abv }}</label></li>
+							</ul>
+						</div>
+					</div>
+					
+					<!-- Last 7 -->
+					<div class="tab-content">
+					<div class="tab-pane fade show active" id="last7" role="tabpanel" aria-labelledby="last7-tab">
+						<div class="row justify-content-md-center">
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+											<i class="ni ni-square-pin"></i>
+										  </div>
+										  </div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Distance</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ last7.dist }}</span>
+										</div>
+										</div>
+									  </div>
+									</div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-default text-white rounded-circle shadow">
+											<i class="fa fa-clock-o"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Time</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ last7.time }}</span>
+										</div>
+									  </div>
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+											<i class="ni ni-user-run"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Pace</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ last7.pace }}</span>
+										</div>
+									  </div>
+									</div>
+								  </div>
+							</div>
+						</div>
+						<div class="row justify-content-md-center">
+							<div class="col-sm-3">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-cyan text-white rounded-circle shadow">
+											<i class="ni ni-image"></i>
+										  </div>
+										</div>
+										<div class="col-sm-8">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Climbing</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ last7.elev }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body" style="padding-bottom: 14px;">
+									  <div class="row justify-content-md-center mb-1">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-indigo text-white rounded-circle shadow">
+											<i class="ni ni-sound-wave"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <div class="row">
+										  <div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Intensity</h5>
+										  </div>
+										</div>
+										<div class="row justify-content-md-center">
+										  <div class="col-auto">
+										  <span class="h4 font-weight-bold mb-0">{{ last7.intensity }}</span>
+										  </div>
+										  </div>
+										</div>
+										</div>
+
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
+											<i class="ni ni-favourite-28"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg HR</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ last7.avg_hr }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+						</div>
+					</div>
+						
+					<!-- Month -->
+					<div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="month-tab">
+						<div class="row justify-content-md-center">
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+											<i class="ni ni-square-pin"></i>
+										  </div>
+										  </div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Distance</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ month_stats.dist }}</span>
+										</div>
+										</div>
+									  </div>
+									</div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-default text-white rounded-circle shadow">
+											<i class="ni ni-time-alarm"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Time</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ month_stats.time }}</span>
+										</div>
+									  </div>
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+											<i class="ni ni-user-run"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Pace</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ month_stats.pace }}</span>
+										</div>
+									  </div>
+									</div>
+								  </div>
+							</div>
+						</div>
+						<div class="row justify-content-md-center">
+							<div class="col-sm-3">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-cyan text-white rounded-circle shadow">
+											<i class="ni ni-image"></i>
+										  </div>
+										</div>
+										<div class="col-sm-8">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Climbing</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ month_stats.elev }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body" style="padding-bottom: 14px;">
+									  <div class="row justify-content-md-center mb-1">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-indigo text-white rounded-circle shadow">
+											<i class="ni ni-sound-wave"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <div class="row">
+										  <div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Intensity</h5>
+										  </div>
+										</div>
+										<div class="row justify-content-md-center">
+										  <div class="col-auto">
+										  <span class="h4 font-weight-bold mb-0">{{ month_stats.intensity }}</span>
+										  </div>
+										  </div>
+										</div>
+										</div>
+
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
+											<i class="ni ni-favourite-28"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg HR</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ month_stats.avg_hr }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Year Stats -->
+					<div class="tab-pane fade" id="year" role="tabpanel" aria-labelledby="year-tab">
+						<div class="row justify-content-md-center">
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+											<i class="ni ni-square-pin"></i>
+										  </div>
+										  </div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Distance</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ year_stats.dist }}</span>
+										</div>
+										</div>
+									  </div>
+									</div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-default text-white rounded-circle shadow">
+											<i class="ni ni-time-alarm"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Time</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ year_stats.time }}</span>
+										</div>
+									  </div>
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+											<i class="ni ni-user-run"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Pace</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ year_stats.pace }}</span>
+										</div>
+									  </div>
+									</div>
+								  </div>
+							</div>
+						</div>
+						<div class="row justify-content-md-center">
+							<div class="col-sm-3">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-cyan text-white rounded-circle shadow">
+											<i class="ni ni-image"></i>
+										  </div>
+										</div>
+										<div class="col-sm-8">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Climbing</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ year_stats.elev }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body" style="padding-bottom: 14px;">
+									  <div class="row justify-content-md-center mb-1">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-indigo text-white rounded-circle shadow">
+											<i class="ni ni-sound-wave"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <div class="row">
+										  <div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Intensity</h5>
+										  </div>
+										</div>
+										<div class="row justify-content-md-center">
+										  <div class="col-auto">
+										  <span class="h4 font-weight-bold mb-0">{{ year_stats.intensity }}</span>
+										  </div>
+										  </div>
+										</div>
+										</div>
+
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
+											<i class="ni ni-favourite-28"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg HR</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ year_stats.avg_hr }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Custom View Range Stats -->
+					<div class="tab-pane fade" id="view" role="tabpanel" aria-labelledby="view-tab">
+						<div class="row justify-content-md-center">
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+											<i class="ni ni-square-pin"></i>
+										  </div>
+										  </div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Distance</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ view_stats.dist }}</span>
+										</div>
+										</div>
+									  </div>
+									</div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-default text-white rounded-circle shadow">
+											<i class="ni ni-time-alarm"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Tot. Time</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ view_stats.time }}</span>
+										</div>
+									  </div>
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+											<i class="ni ni-user-run"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Pace</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ view_stats.pace }}</span>
+										</div>
+									  </div>
+									</div>
+								  </div>
+							</div>
+						</div>
+						<div class="row justify-content-md-center">
+							<div class="col-sm-3">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-cyan text-white rounded-circle shadow">
+											<i class="ni ni-image"></i>
+										  </div>
+										</div>
+										<div class="col-sm-8">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Climbing</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ view_stats.elev }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body" style="padding-bottom: 14px;">
+									  <div class="row justify-content-md-center mb-1">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-indigo text-white rounded-circle shadow">
+											<i class="ni ni-sound-wave"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <div class="row">
+										  <div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg Intensity</h5>
+										  </div>
+										</div>
+										<div class="row justify-content-md-center">
+										  <div class="col-auto">
+										  <span class="h4 font-weight-bold mb-0">{{ view_stats.intensity }}</span>
+										  </div>
+										  </div>
+										</div>
+										</div>
+
+									  <span></span>
+									</div>
+								  </div>
+							</div>
+							<div class="col-auto">
+								<div class="card card-stats">
+									<!-- Card body -->
+									<div class="card-body">
+									  <div class="row justify-content-md-center">
+										<div class="col-xs">
+										  <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
+											<i class="ni ni-favourite-28"></i>
+										  </div>
+										</div>
+										<div class="col-auto">
+										  <h5 class="card-title text-uppercase text-muted mb-0">Avg HR</h5>
+										  <span class="h2 font-weight-bold mb-0">{{ view_stats.avg_hr }}</span>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
+</div>
+</div>

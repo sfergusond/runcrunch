@@ -1,0 +1,169 @@
+<div class="row justify-content-center">
+	<div class="col-auto">
+	  <span class="badge badge-warning" style="margin-top: 12px">Info</span>
+	</div>
+	<div class="col-md-2">
+		<button type="button" class="btn btn-block btn-warning mb-3" data-toggle="modal" data-target="#gap_info">GAP</button>
+			<div class="modal fade pl-lg-9" id="gap_info" tabindex="-1" role="dialog" aria-labelledby="pace_info" aria-hidden="true">
+				<div class="modal-dialog modal-danger modal-dialog-centered modal-" role="document">
+					<div class="modal-content bg-gradient-danger" style="width: 400px">
+			
+						<div class="modal-header">
+							<h6 class="modal-title" id="modal-title-notification">Grade Adjusted Pace</h6>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+						</div>
+			
+						<div class="modal-body">
+							
+							<div class="py-1 text-center">
+								<i class="ni ni-image ni-3x"></i><span>  </span><i class="ni ni-user-run ni-3x"></i>
+								<h4 class="heading mt-4"></h4>
+								<p>Grade adjusted pace approximates the pace you would run on flat ground using the same energy expenditure as the current pace and grade</p>
+								<p><a href="https://medium.com/strava-engineering/an-improved-gap-model-8b07ae8886c3"><small>Click here for more info</small></a></p>
+								<p>Adjusted pace also takes altitude into account. For every 1000 ft (304.8m) of elevation after 1000 ft, adjusted pace is increased by 1.9%</p>
+								<p><a href="https://runnersconnect.net/high-altitude-training-running-performance/"><small>Click here for more info</small></a></p>
+							</div>
+							
+						</div>
+			
+						<div class="modal-footer">
+							<button type="button" class="btn btn-white ml-auto" data-dismiss="modal">Got it</button>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<button type="button" class="btn btn-block btn-warning mb-3" data-toggle="modal" data-target="#intensity_info">Intensity Score</button>
+					<div class="modal fade" id="intensity_info" tabindex="-1" role="dialog" aria-labelledby="intensity_info" aria-hidden="true">
+						<div class="modal-dialog modal-danger modal-dialog-centered modal- pl-lg-9" role="document">
+							<div class="modal-content bg-gradient-danger" style="width: 400px">
+					
+								<div class="modal-header">
+									<h6 class="modal-title" id="modal-title-notification">Intensity Score</h6>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">×</span>
+									</button>
+								</div>
+					
+								<div class="modal-body">
+									
+									<div class="py-1 text-center">
+										<i class="ni ni-sound-wave ni-3x"></i><span>   </span><i class="ni ni-favourite-28 ni-3x"></i>
+										<h4 class="heading mt-4"></h4>
+										<p>Intensity score is the difference between your current effort and a function describing your theoretical best efforts at any distance given a recent best time and distance.</p>
+										<p>For example, if your best 5k time is 15:00 and you went for a 5km run in 20:00, your intensity would be 63%. A 10 mile run in 1:25:00 would result in an intensity score of 41%, and so on.</p>
+										<p>A run's overall intensity score is calculated with GAP data if available. For intensity scores dislayed in auto-lap and device-lap data, the intensity score is calculated for the distance of that lap. This is done to display more accurate info about interval training.</p>
+										<p>To prevent paces at walking pace or below to skew the result, the percentage range is scaled between your PR information and 15:00 min/mile pace or 2.25x your best theoretical mile PR, whichever is faster.</p>
+										<p><a href="https://www.alexpghayes.com/blog/comparing-runs-with-riegels-formula-and-gams/"><small>Click here for more info</small></a></p>
+									</div>
+									
+								</div>
+					
+								<div class="modal-footer">
+									<button type="button" class="btn btn-white ml-auto" data-dismiss="modal">Got it</button>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+	<div class="col-md-2">
+		<button type="button" class="btn btn-block btn-warning mb-3" data-toggle="modal" data-target="#pace_info">Pace Zones</button>
+					<div class="modal fade" id="pace_info" tabindex="-1" role="dialog" aria-labelledby="pace_info" aria-hidden="true">
+						<div class="modal-dialog modal-danger modal-dialog-centered modal- pl-lg-9" role="document">
+							<div class="modal-content bg-gradient-danger" style="width: 800px">
+					
+								<div class="modal-header">
+									<h6 class="modal-title" id="modal-title-notification">Pace Zones</h6>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">×</span>
+									</button>
+								</div>
+					
+								<div class="modal-body" style="width: 800px">
+									<p class="text-md-center text-white-50">Zones are a percentage of your theoretical best/fastest pace at an arbitrary distance.</p>
+									<div class="row">
+										<div class="col-auto">
+											<img src="https://github.com/sfergusond/imgdump/blob/master/pace_zones_transparent.png?raw=true" alt="Pace Zone Colorbar" width="60" height="1200"></img>
+										</div>
+										<div class="col-sm">
+											<div class="py-1 text-center">
+												<dl class="row">
+												<dt class="col-sm-3" style="margin-bottom: 75px;">&gt;95%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Anaerobic<br>(Race Effort)</dt>
+													<dd class="col-sm-8">Running that exceeds your body's aerobic capacity.</dd>
+													</dl>
+												</dd>
+												<dt class="col-sm-3">90%-95%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">VO2 Max</dt>
+													<dd class="col-sm-8">Running that meets your body's maximum ability to utilize oxygen.</dd>
+													</dl>
+												</dd>
+												<dt class="col-sm-3" style="margin-bottom: 25px;">80%-90%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Tempo</dt>
+													<dd class="col-sm-8">A pace about 30 seconds slower per mile (18.6 s/km) than your best 5k pace. Training at this pace increases the pace at which your body can utilize oxygen. </dd>
+													</dl>
+												</dd>
+												<br><br>
+												<dt class="col-sm-3" style="margin-bottom: 150px;">70%-80%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Threshold</dt>
+													<dd class="col-sm-8">Your theoretical best pace for a one-hour run. Increases your body's aerobic capacity.</dd>
+													</dl>
+												</dd>
+												<br><br>
+												<dt class="col-sm-3" style="margin-bottom: 175px;">57.5%-70%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Endurance<br>Hard</dt>
+													<dd class="col-sm-8">A moderately-difficult pace with aerobic benefits without much recovery benefit.</dd>
+													</dl>
+												</dd>
+												<br><br><br>
+												<dt class="col-sm-3" style="margin-bottom: 175px;">42.5%-57.5%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Endurance<br>Moderate</dt>
+													<dd class="col-sm-8">A moderate pace with aerobic benefits and some recovery benefit.</dd>
+													</dl>
+												</dd>
+												<br><br><br>
+												<dt class="col-sm-3" style="margin-bottom: 175px;">30%-42.5%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Endurance<br>Easy</dt>
+													<dd class="col-sm-8">A moderately-easy pace with aerobic benefits and good recovery benefit.</dd>
+													</dl>
+												</dd>
+												<br><br><br>
+												<dt class="col-sm-3">&lt;30%</dt>
+												<dd class="col-sm-9">
+													<dl class="row">
+													<dt class="col-sm-4">Recovery</dt>
+													<dd class="col-sm-8">An easy pace that lets your body recover.</dd>
+													</dl>
+												</dd>
+											</div>
+											
+										</div>
+										
+									</div>
+								</div>
+					
+								<div class="modal-footer" style="margin-top: -80px">
+									<button type="button" class="btn btn-white ml-auto" data-dismiss="modal">Got it</button>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+	</div>

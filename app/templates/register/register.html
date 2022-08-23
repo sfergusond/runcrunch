@@ -1,0 +1,42 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block register %}
+<div class="modal d-block" data-show="true" id="login" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="true">
+	<div class="modal-dialog modal- modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+		<div class="modal-content">
+			<div class="modal-header" style="padding-bottom: 0px">
+				<div class="justify-content-start">
+					<p class="text-lg">Create an Account</p>
+				</div>
+				<div class="justify-content-end">
+				<a href="/">
+					<span>×</span>
+				</a>
+				</div>
+			</div>
+		
+			<div class="modal-body p-lg-0">				
+				<div class="card-body" style="padding-top: 0%">
+					  {% csrf_token %}
+						<form method="post" class="form-group">
+							{% csrf_token %}
+							{{ form }}
+							<div class="row">
+								<div class="col col-auto">
+									<button type="submit" class="btn btn-success">
+									Register
+									</button>
+								</div>
+								<div class="col col-auto">
+									<p class="text-muted small py-lg-3"><a href="/privacy">Privacy Policy</a></p>
+								</div>
+							</div>
+						</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

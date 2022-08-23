@@ -1,0 +1,41 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block login %}
+
+<div class="modal d-block" data-show="true" id="login" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="true">
+	<div class="modal-dialog modal- modal-dialog-centered modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header justify-content-end">
+				<a href="/">
+					<span>×</span>
+				</a>
+			</div>
+		
+			<div class="modal-body p-lg-0">
+				
+				<div class="card-body px-lg-5 py-lg-5">
+					<form method="post" class="form-group">
+						{% csrf_token %}
+						{{ form }}
+						<small><a href="/password_reset">Forgot password?</a></small>
+						<br>
+						<input type="hidden" name="user" value="{{ response.user }}"></input>
+			
+						<button type="submit" class="btn btn-success">Login</button>
+					</form>
+				
+					<div class="text-center text-muted mb-4">
+						<small>Or, <a href="/register">create an account.</a></small>
+						
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+

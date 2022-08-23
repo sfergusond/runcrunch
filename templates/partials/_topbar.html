@@ -1,0 +1,72 @@
+{% load static %}
+
+<!-- Topnav -->
+<nav class="navbar navbar-top navbar-expand navbar-dark bg-default border-bottom">
+	<div class="container-fluid">
+		
+		<a href="/">
+		<div class="nav-text brand">
+			<span class="display-4 text-white">RunCrunch</span>
+		</div>
+		</a>
+  
+		<!-- Navbar links -->
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item">
+				<a class="nav-link nav-link-icon" href="/dashboard">
+				<i class="ni ni-tv-2"></i>
+				<span class="nav-link-inner--text">Dashboard</span>
+			</a>
+			</li>
+				<li class="nav-item">
+				<a class="nav-link nav-link-icon" href="/dashboard/trends">
+				<i class="ni ni-chart-bar-32"></i>
+				<span class="nav-link-inner--text">Trends</span>
+			</a>
+			</li>
+				<li class="nav-item">
+				<a class="nav-link nav-link-icon" href="/dashboard/heatmap">
+				<i class="ni ni-world"></i>
+				<span class="nav-link-inner--text">Heatmap</span>
+				</a>
+			</li>
+		</ul>
+	  
+	  
+	  <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+		<li class="nav-item dropdown">
+		  <a id="profile" class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			<div class="media align-items-center">
+			  <span class="avatar avatar-sm rounded-circle">
+				<img alt="" src="{{ athlete.profile_pic }}">
+			  </span>
+			  <div class="media-body  ml-2  d-none d-lg-block">
+				{% if user.first_name != "" or user.first_name != None %}
+				<span class="mb-0 text-sm  font-weight-bold">{{ user.first_name }}</span>
+				{% elif user == "AnonymousUser" %}
+				<span class="mb-0 text-sm  font-weight-bold">Guest</span>
+				{% else %}
+				<span class="mb-0 text-sm  font-weight-bold">{{ user }}</span>
+				{% endif %}
+			  </div>
+			</div>
+		  </a>
+		  <div class="dropdown-menu  dropdown-menu-right ">
+			<div class="dropdown-header noti-title">
+			  <h6 class="text-overflow m-0">Welcome!</h6>
+			</div>
+			<a href="/account" class="dropdown-item">
+			  <i class="ni ni-single-02"></i>
+			  <span>My profile</span>
+			</a>
+			<div class="dropdown-divider"></div>
+			<a href="/logout" class="dropdown-item">
+			  <i class="ni ni-user-run"></i>
+			  <span>Logout</span>
+			</a>
+		  </div>
+		</li>
+	  </ul>
+	</div>
+  </div>
+</nav>

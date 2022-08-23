@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RunCrunch - Heatmap{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<div class="row"></div>
+<br>
+
+<div class="alert alert-default btn-default stretched-link" role="alert">
+  <span class="alert-icon"><i class="ni ni-map-big"></i></span>
+  <span class="alert-text"><strong>Heatmap</strong></span>
+</div>
+
+<div id="desc" class="row justify-content-md-center">
+  <div class="col col-xl-12">
+    <div class="card card-stats">
+      <div class="card-body" style="width:70rem;height:45rem" id="heatmap"></div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">{% include 'js/getHeatmap.js' %}</script>
+
+{% endblock %}
