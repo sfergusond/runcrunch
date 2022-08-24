@@ -134,7 +134,6 @@ STATICFILES_DIRS = [
   os.path.join(BASE_DIR, 'runcrunch/static'),
   ("css", os.path.join(STATIC_ROOT, 'css')),
   ("img", os.path.join(STATIC_ROOT, 'img')),
-  ("fonts", os.path.join(STATIC_ROOT, 'fonts')),
   ("js", os.path.join(STATIC_ROOT, 'js')),
 ]
 

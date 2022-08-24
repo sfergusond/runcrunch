@@ -14,7 +14,7 @@
 		<ul class="navbar-nav ml-auto">
       {% if request.user.is_authenticated %}
 			<li class="nav-item">
-				<a class="nav-link nav-link-icon" href="{% url 'dashboard' %}%}">
+				<a class="nav-link nav-link-icon" href="{% url 'dashboard' %}">
 				<i class="ni ni-tv-2"></i>
 				<span class="nav-link-inner--text">Dashboard</span>
 			</a>
@@ -40,6 +40,11 @@
 				</a>
 			</li>
       {% else %}
+      <li class="nav-item">
+				<a class="nav-link nav-link-icon" href="{% url 'register' %}">
+				<span class="nav-link-inner--text">Register</span>
+				</a>
+			</li>
       <li class="nav-item">
 				<a class="nav-link nav-link-icon" href="{% url 'login' %}">
 				<span class="nav-link-inner--text">Login</span>
