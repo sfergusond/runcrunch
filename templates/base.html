@@ -23,27 +23,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
   <meta name="description" content="RunCrunch Interactive Dashboard">
   <meta name="author" content="Spencer Ferguson-Dryden">
-  <meta name="keywords" content="invest, stocks, fantasy, NYSE, competition, game, compete" />
-  <meta name="description" content="Tickr is the first ever provider of daily and weekly stock-based fantasy competitions. Pick your stocks for the day in a head-to-head matchup, or in a pooled matchup for the week, and compete to earn the most points!" />
+  <meta name="keywords" content="running, strava, data, athlete, run" />
+  <meta name="description" content="RunCrunch is a running log, performance analysis tool, and visualizer. RunCrunch was created with the goal of providing free and powerful visuals beyond the scope of typical fitness services, while keeping your fitness data easily accessible in an intuitive, interactive user interface." />
   <title>{% block title %} {% endblock %}</title>
   
   <!-- Fresh Table -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-  
   
   <!-- Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
   <!-- Icons -->
-  <link rel="stylesheet" href="{% static 'vendor/nucleo.css' %}" type="text/css">
   <!-- Page plugins -->
   <!-- Argon CSS -->
   <link rel="stylesheet" href="{% static 'css/argon.css' %}" type="text/css">
 
   <!-- any extra scripts here -->
-
-  <script data-ad-client="ca-pub-4908911679798951" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
   {% block head %} {% endblock %}
 
 </head>
@@ -51,12 +47,10 @@
 <body>
 	<div class="wrapper">
 
-  <!-- Sidebar -->
-
   <!-- Main content -->
   <div class="main-content" id="panel">
 
-	{% include 'partials/_topbar.html' %}
+	{% include 'components/_topbar.html' %}
 
 	{% block header %} {% endblock %}
 
@@ -67,7 +61,7 @@
 
 	{% endblock %}
 
-	{% include 'partials/_footer.html' %}
+	{% include 'components/_footer.html' %}
 	</div>
 
   </div>
@@ -78,14 +72,9 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <!-- Optional JS -->
-  
-  <!-- Argon JS -->
-  <script src="{% static 'js/argon.js' %}"></script>
-  
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script
+  <!-- Optional JS --> 
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
 
-  <!-- any extra scripts here -->
   {% block scripts %} {% endblock %}
 
 

@@ -6,9 +6,13 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from . import forms
+from .forms import DateForm, PersonalRecord, UnitPreference
 from .models import Athlete, Activity
 from .utils.callImporter import callImporter
+from .utils.getActivityStatsForPeriod import getActivityStatsForPeriod
+from utils.calendar import getNextSunday
+
+import datetime
 
 def register(request):
   if request.method == 'POST':
@@ -25,9 +29,15 @@ def register(request):
       return redirect('/connect-to-strava')
   else:
       form = UserCreationForm()
-  return render(request, 'register/register.html', {'form': form})
+  return render(
+    request,
+    'pages/register.html',
+    {
+      'form': form
+    }
+  )
 
-@login_required(redirect_field_name='/login')
+@login_required
 def connect_to_strava(request):
   queryString = dict(request.GET.items())
   if 'activity:read' in queryString.get('scope', ''):
@@ -41,11 +51,19 @@ def connect_to_strava(request):
     f'redirect_uri={settings.DOMAIN}/connect-to-strava&' +
     '&approval_prompt=auto&response_type=code&scope=activity%3Aread%2Cactivity%3Aread_all'
     )
-  return render(request, 'home/connectToStrava.html', {'redirectUrl': redirectUrl})
+  return render(
+    request,
+    'pages/connectToStrava.html',
+    {
+      'redirectUrl': redirectUrl
+    }
+  )
 
-@login_required(redirect_field_name='/login')
+@login_required
 def account(request):
   if request.method == 'POST':
+    prForm = PersonalRecord(request.POST)
+    unitPreference = UnitPreference(request.POST)
     if 'import' in request.POST:
       # Deny import if too many activities present
       activityCount = Activity.objects.filter(
@@ -53,35 +71,79 @@ def account(request):
       ).count()
       if activityCount < 1000:
         callImporter(request.athlete)
-  context = {}
-  prForm = forms.PersonalRecord(request.POST)
-  unitPreference = forms.UnitPreference(request.POST)
-  context.update({
-    'prForm': prForm,
-    'unitPreference': unitPreference,
+    if 'prForm' in request.POST:
+      if prForm.is_valid():
+        prForm.save(request.athlete)
+    if 'unitPref' in request.POST:
+      if unitPreference.is_valid():
+        unitPreference.save(request.athlete)
+  else:
+    prForm = PersonalRecord()
+    unitPreference = UnitPreference({
+      'metric': request.athlete.unitPreference
     })
-  return render(request, 'home/account.html', context)
+    accountStats = getActivityStatsForPeriod(
+      datetime.date.min,
+      datetime.date.max,
+      request.athlete
+    )
+  return render(
+    request,
+    'pages/account.html',
+    {
+      'prForm': prForm,
+      'unitPreference': unitPreference,
+      'accountStats': accountStats
+    }
+  )
 
-@login_required(redirect_field_name='/login')
+@login_required
+def dashboard(request):
+  if request.method == 'POST':
+    dateForm = DateForm(request.POST)
+    if dateForm.is_valid():
+      formData = dateForm.cleaned_data
+      fromDate = min(formData['fromDate'], formData['toDate'])
+      toDate = max(formData['fromDate'], formData['toDate'])
+  else:
+    toDate = getNextSunday().date()
+    fromDate = toDate - datetime.timedelta(days=20)
+    dateForm = DateForm({
+      'fromDate': fromDate,
+      'toDate': toDate
+    })
+  periodStats = getActivityStatsForPeriod(fromDate, toDate, request.athlete)
+  lastSevenStats = getActivityStatsForPeriod(
+    datetime.datetime.today() - datetime.timedelta(days=6),
+    datetime.datetime.today(),
+    request.athlete
+  )
+  return render(
+    request,
+    'pages/dashboard.html',
+    {
+      'dateForm': dateForm,
+      'fromDate': fromDate,
+      'toDate': toDate,
+      'periodStats': periodStats,
+      'lastSevenStats': lastSevenStats
+    }
+  )
+
+@login_required
 def viewActivity(request, activityId):
   activity = Activity.objects.get(pk=activityId)
   if activity.athlete != request.athlete:
     return HttpResponse(status=403)
-  # Make activity details
   activity.getStreams()
   activity.getFriendlyStats()
   activityJson = activity.toJson()
   #print(activity.__dict__)
-  # Get activity streams
   return render(
     request,
-    'home/viewActivity.html',
+    'pages/viewActivity.html',
     {
       'activity': activity,
       'activityJson': activityJson
     }
   )
-  
-@login_required(redirect_field_name='/login')
-def viewHeatmap(request):
-  return render(request, 'home/viewHeatmap.html')

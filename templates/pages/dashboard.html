@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RunCrunch - Dashboard{% endblock %}
+
+{% block header %}{% include 'components/_dashboardHeader.html' %}{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+
+<div class="row"></div>
+<br>
+    
+<div class="row justify-content-md-center">	
+  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <ul class="nav" role="tablist">
+      <li><label class="btn btn-secondary active nav-item" id="dist-tab" data-toggle="tab" href="#distanceChart" role="tab" aria-controls="tab" aria-selected="true">Distance</label></li>
+      <li><label class="btn btn-secondary nav-item" id="time-tab" data-toggle="tab" href="#timeChart" role="tab" aria-controls="tab" aria-selected="false">Time</label></li>
+      <li><label class="btn btn-secondary nav-item" id="elev-tab" data-toggle="tab" href="#elevationChart" role="tab" aria-controls="tab" aria-selected="false">Elevation</label></li>
+      <li><label class="btn btn-secondary nav-item" id="schedule-tab" data-toggle="tab" href="#scheduleChart" role="tab" aria-controls="tab" aria-selected="false">Schedule</label></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="col col-xl">
+  <div class="card card-stats">
+    <div class="card-body">
+      <div class="tab-content">
+        <div id="distanceChart" class="tab-pane fade show active" role="tabpanel" aria-labelledby="dist-tab"></div>
+        <div id="timeChart" class="tab-pane fade" role="tabpanel" aria-labelledby="time-tab"></div>
+        <div id="elevationChart" class="tab-pane fade" role="tabpanel" aria-labelledby="elev-tab"></div>
+        <div id="schedule" class="tab-pane fade" role="tabpanel" aria-labelledby="schedule-tab"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-default" role="alert">
+  <span class="alert-icon"><i class="ni ni-bullet-list-67"></i></span>
+  <span class="alert-text"><strong>Activity List</strong></span>
+</div>
+
+<div class="row justify-content-md-center">
+  <div class="col col-auto">
+    <div class="card card-stats">
+      <div class="card-body">
+          <table id="dashboardTable" class="table table-hover table-striped table-responsive">
+            <thead class="thead-dark">
+              <th data-field="date">Date</th>
+              <th data-field="name">Name</th>
+              <th data-field="distance">Distance</th>
+              <th data-field="time">Time</th>
+              <th data-field="pace">Pace</th>
+              <th data-field="elevation">Elevation</th>
+              <th data-field="avg_hr">Average<br>Heartrate</th>
+              <th data-field="view"></th>
+            </thead>
+          </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dropdown-divider"></div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>{% include 'js/getDashboardTable.js' %}</script>
+  <script>{% include 'js/getDashboardBarChart.js' with metric='distance' %}</script>
+  <script>{% include 'js/getDashboardBarChart.js' with metric='time' %}</script>
+  <script>{% include 'js/getDashboardBarChart.js' with metric='elevation' %}</script>
+  
+{% endblock %}
