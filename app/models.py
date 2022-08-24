@@ -89,6 +89,17 @@ class Athlete(models.Model):
     relativePace = (prPace * ((self.prDistance/distance)**0.07))
     return relativePace
   
+  def getPrFriendly(self):
+    time = convert.speedToPace(
+      self.prDistance / self.prTime,
+      self.unitPreference
+    )
+    distance = convert.distanceFriendly(
+      self.prDistance,
+      self.unitPreference
+    )
+    return f'{time} for {distance}'
+  
 class Activity(models.Model):
   id = models.BigAutoField(
     primary_key=True
@@ -142,7 +153,8 @@ class Activity(models.Model):
       speed = self.distance / self.time
     else:
       speed = adjustedSpeed
-    prSpeed = athlete.prDistance/athlete.prTime
+    speed = speed - easyPace
+    prSpeed = athlete.prDistance / athlete.prTime
     prEffort = (
       prSpeed * (
         (athlete.prDistance / self.distance) ** 0.07
@@ -150,6 +162,7 @@ class Activity(models.Model):
       ) - easyPace
     intensity = round((speed/prEffort) * 100, 2)
     self.intensity = intensity
+    self.save()
     return intensity
 
   def getFriendlyStats(self):
@@ -165,7 +178,7 @@ class Activity(models.Model):
     self.timeFriendly = stravaActivity.moving_time
     self.elevationFriendly = (
       unithelper.feet(stravaActivity.total_elevation_gain) if convertImperial
-      else stravaActivity.total_elevation_gain
+      else round(stravaActivity.total_elevation_gain)
     )
     self.paceFriendly = convert.speedToPace(stravaActivity.average_speed, unitPref)
     if self.hasStreams:

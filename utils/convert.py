@@ -1,18 +1,17 @@
 import datetime
-from typing import Callable
+import pandas as pd
 
 CONVERSIONS = {
   'metersToMiles': lambda x: x / 1609.34,
   'metersToFeet': lambda x : x * 3.28084,
   'metersToKm': lambda x: x / 1000,
   'secondsToMins': lambda x: x / 60,
+  'kmToMeters': lambda x : x * 1000,
+  'milesToMeters': lambda x : x * 1609.34
 }
 
-def convertStream(stream, conversion, *args):
-  if isinstance(conversion, str):
-    stream = list(map(lambda x : CONVERSIONS[conversion](x), stream))
-  elif isinstance(conversion, Callable):
-    stream = list(map(lambda x: conversion(x, *args), stream))
+def convertStream(stream, conversion):
+  stream = list(map(lambda x : CONVERSIONS[conversion](x), stream))
   return stream
 
 def speedToPace(speed, unitType):
@@ -30,16 +29,20 @@ def speedToPace(speed, unitType):
         CONVERSIONS['metersToKm'](speed) /
         CONVERSIONS['secondsToMins'](1)
       )
-  pace = minutesFriendly(pace)
+  pace = timeFriendly(pace, precision='minutes')
   return pace
     
-def minutesFriendly(minutes):
-  minsFriendly = str(datetime.timedelta(minutes=minutes))
-  minsFriendly = minsFriendly[:minsFriendly.find('.')]
-  if minutes < 60:
-    minsFriendly = minsFriendly.split(':')
-    minsFriendly = ':'.join(minsFriendly[1:])
-  return minsFriendly
+def timeFriendly(time, precision='seconds'):
+  if precision == 'seconds':
+    timeFriendly = str(datetime.timedelta(seconds=time))
+  elif precision == 'minutes':
+    timeFriendly = str(datetime.timedelta(minutes=time))
+  if '.' in timeFriendly:
+    timeFriendly = timeFriendly[:timeFriendly.find('.')]
+  if time / (60 if precision == 'seconds' else 1) < 60:
+    timeFriendly = timeFriendly.split(':')
+    timeFriendly = ':'.join(timeFriendly[1:])
+  return timeFriendly
 
 def intensityFriendly(intensity):
   if isinstance(intensity, (int, float)):
@@ -64,3 +67,25 @@ def intensityFriendly(intensity):
     else:
       return 'Recovery'
   return ''
+
+def distanceFriendly(distance, unitPref):
+  if unitPref == 'I':
+    distance = round(CONVERSIONS['metersToMiles'](distance), 2)
+    distance = f'{distance} mi'
+    return distance
+  else:
+    distance = round(CONVERSIONS['metersToKm'](distance), 2)
+    distance = f'{distance} km'
+    return distance
+  
+def elevationFriendly(elevation, unitPref):
+  if not elevation or pd.isna(elevation):
+    return ''
+  if unitPref == 'I':
+    elevation = round(CONVERSIONS['metersToFeet'](elevation))
+    elevation = f'{elevation} ft'
+    return elevation
+  else:
+    elevation = round(elevation)
+    elevation = f'{elevation} m'
+    return elevation

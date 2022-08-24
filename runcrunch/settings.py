@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = 'sferg' in os.path.expanduser('~')
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
-DOMAIN = 'http://localhost:8000' if DEBUG else ''
+DOMAIN = 'http://localhost:8000' if DEBUG else 'https://runcrunch.herokuapp.com'
 
 # Application definition
 
@@ -66,7 +66,7 @@ TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': [ os.path.join(BASE_DIR, 'templates') ],
-    'APP_DIRS': True,
+    'APP_DIRS': False,
     'OPTIONS': {
       'context_processors': [
         'django.template.context_processors.debug',
@@ -117,7 +117,7 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 STATICFILES_FINDERS =  [

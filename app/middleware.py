@@ -6,7 +6,7 @@ def athleteMiddleware(get_response):
       athlete = Athlete.objects.get(user=request.user)
       request.athlete = athlete
       athlete.stravaReauthenticate()
-      print(athlete.__dict__)
+      # print(athlete.__dict__)
     else:
       request.athlete = None
     response = get_response(request)

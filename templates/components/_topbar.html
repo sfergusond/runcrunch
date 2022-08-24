@@ -1,0 +1,52 @@
+{% load static %}
+
+<!-- Topnav -->
+<nav class="navbar navbar-top navbar-expand navbar-dark bg-default border-bottom">
+	<div class="container-fluid">
+		
+		<a href="/">
+		<div class="nav-text brand">
+			<span class="display-4 text-white">RunCrunch</span>
+		</div>
+		</a>
+  
+		<!-- Navbar links -->
+		<ul class="navbar-nav ml-auto">
+      {% if request.user.is_authenticated %}
+			<li class="nav-item">
+				<a class="nav-link nav-link-icon" href="{% url 'dashboard' %}%}">
+				<i class="ni ni-tv-2"></i>
+				<span class="nav-link-inner--text">Dashboard</span>
+			</a>
+			</li>
+				<li class="nav-item">
+				<a class="nav-link nav-link-icon" href="#">
+				<span class="nav-link-inner--text">Trends</span>
+			</a> 
+			</li>
+      <li class="nav-item">
+				<a class="nav-link nav-link-icon" href="{% url 'viewHeatmap' %}">
+				<span class="nav-link-inner--text">Heatmap</span>
+				</a>
+			</li>
+      <li class="nav-item">
+				<a class="nav-link nav-link-icon" href="{% url 'account' %}">
+				<span class="nav-link-inner--text">My Profile</span>
+				</a>
+			</li>
+      <li class="nav-item">
+				<a class="nav-link nav-link-icon" href="{% url 'logout' %}">
+				<span class="nav-link-inner--text">Logout</span>
+				</a>
+			</li>
+      {% else %}
+      <li class="nav-item">
+				<a class="nav-link nav-link-icon" href="{% url 'login' %}">
+				<span class="nav-link-inner--text">Login</span>
+				</a>
+			</li>
+      {% endif %}
+		</ul>
+	</div>
+  </div>
+</nav>

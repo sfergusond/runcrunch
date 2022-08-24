@@ -2,12 +2,14 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 
+from utils.convert import CONVERSIONS
+
 metricChoices = [
-  ('dist', 'Distance'),
+  ('distance', 'Distance'),
   ('time', 'Time'),
-  ('elev', 'Elevation'),
+  ('elevation', 'Elevation'),
   ('pace', 'Pace'),
-  ('avg_hr', 'Avg HR'),
+  ('heartrate', 'Avg HR'),
   ('intensity', 'Intensity')
   ]
 
@@ -29,7 +31,7 @@ class DatePicker(forms.DateInput):
   input_type='date'
 
 class DateForm(forms.Form):
-  dateStart = forms.DateField(
+  fromDate = forms.DateField(
     required=True,
     label="From",
     widget=DatePicker(
@@ -39,7 +41,7 @@ class DateForm(forms.Form):
       }
     )
   )
-  dateEnd = forms.DateField(
+  toDate = forms.DateField(
     required=True,
     label="To",
     widget=DatePicker(
@@ -76,7 +78,8 @@ class PersonalRecord(forms.Form):
       }
     ),
     label='',
-    validators=[validatePos]
+    validators=[validatePos],
+    initial=0
   )
   m = forms.IntegerField(
     widget=forms.NumberInput(
@@ -87,7 +90,8 @@ class PersonalRecord(forms.Form):
       }
     ),
     label='',
-    validators=[validateTime, validatePos]
+    validators=[validateTime, validatePos],
+    initial=0
   )
   s = forms.IntegerField(
     widget=forms.NumberInput(
@@ -98,7 +102,8 @@ class PersonalRecord(forms.Form):
       }
     ),
     label='',
-    validators=[validateTime, validatePos]
+    validators=[validateTime, validatePos],
+    initial=0
   )
   distance = forms.IntegerField(
     widget=forms.NumberInput(
@@ -109,7 +114,8 @@ class PersonalRecord(forms.Form):
         }
       ),
       label='',
-      validators=[validatePos]
+      validators=[validatePos],
+      initial=0
     )
   unit = forms.ChoiceField(
     widget=forms.Select(
@@ -125,15 +131,33 @@ class PersonalRecord(forms.Form):
       ('mi', 'miles')
     ]
   )
+  
+  def save(self, athlete):
+    data = self.cleaned_data
+    distance = data['distance']
+    if data['unit'] == 'km':
+      distance = CONVERSIONS['kmToMeters'](distance)
+    elif data['unit'] == 'mi':
+      distance = CONVERSIONS['milesToMeters'](distance)
+    hoursToSeconds = data['h']  * 60 * 60
+    minsToSeconds = data['m'] * 60
+    time = hoursToSeconds + minsToSeconds + data['s']
+    athlete.prDistance = distance
+    athlete.prTime = time
+    athlete.save()
+    print(athlete.__dict__)
 
 class UnitPreference(forms.Form):
   metric = forms.ChoiceField(
     choices=[
-      ('metric', 'metric (km, m)'),
-      ('imperial', 'imperial (mi, ft)')
+      ('M', 'metric (km, m)'),
+      ('I', 'imperial (mi, ft)')
     ],
-    required=False,
+    required=True,
     widget=forms.RadioSelect(),
     label=''
   )
   
+  def save(self, athlete):
+    athlete.unitPreference = self.cleaned_data['metric']
+    athlete.save()

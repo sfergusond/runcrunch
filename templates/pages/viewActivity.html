@@ -3,16 +3,15 @@
 
 {% block title %}{{ activity.title }}{% endblock %}
 
-{% block header %}{% include 'partials/_header_detail.html' %}{% endblock %}
+{% block header %}{% include 'components/_header_detail.html' %}{% endblock %}
 
 {% block content %}
-    {# {% load render_table from django_tables2 %} #}
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
 
   <div class="row"></div>
   <br>
   
-  {% include 'partials/_helpbar.html' %}
+  {% include 'components/_helpbar.html' %}
   
   {% if activity.description != "" %}
   <a href="#desc" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="desc">
@@ -243,11 +242,14 @@
   </div>
   
 <div class="dropdown-divider"></div>
+{% endblock %}
 
 {# Graph Callers #}
-<script>{% include 'js/getGraph.js' with graphName='mapThumbnail' %}</script>
-<script>{% include 'js/getGraph.js' with graphName='paceElevGraph' %}</script>
-<script>{% include 'js/getGraph.js' with graphName='3DModelGraph' %}</script>
-<script>{% include 'js/getGraph.js' with graphName='gradeZonesGraph' %}</script>
-
+{% block scripts %}
+{% if activity.hasStreams %}
+  <script>{% include 'js/getGraph.js' with graphName='paceElevGraph' %}</script>
+  <script>{% include 'js/getGraph.js' with graphName='mapThumbnail' %}</script>
+  <script>{% include 'js/getGraph.js' with graphName='3DModelGraph' %}</script>
+  <script>{% include 'js/getGraph.js' with graphName='gradeZonesGraph' %}</script>
+{% endif %}
 {% endblock %}

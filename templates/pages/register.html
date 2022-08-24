@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}RunCrunch - Register{% endblock %}
+{% block content %}
+<h1 class="text-center pt-3">Create an Account</h1>
+<div class="row justify-content-center" style="padding-top: 5rem">
+
+  {% csrf_token %}
+  <form method="post" class="form-group">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="row">
+        {{ field.label}}:
+      </div>
+      <div class="row mb-2">
+        {{ field }}
+      </div>
+    {% endfor %}
+    <div class="row mt-3">
+      <button type="submit" class="btn btn-success btn-block">Register</button>
+    </div>
+  </form>
+</div>
+
+<div class="row" style="padding-bottom: 40vh"></div>
+
+{% endblock %}
