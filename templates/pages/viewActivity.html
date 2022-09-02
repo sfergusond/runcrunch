@@ -3,7 +3,53 @@
 
 {% block title %}{{ activity.title }}{% endblock %}
 
-{% block header %}{% include 'components/_header_detail.html' %}{% endblock %}
+{% block header %}
+<div class="container-fluid bg-primary pt-4">
+  <div class="row justify-content-md-center">
+    {% if activity.hasStreams %}
+    <div class="col col-auto">
+      <div class="card card-stats" style="margin-right: -30%; width: 15rem; height: 12.2rem">
+        <div class="card-body" style="padding:.25rem" id="mapThumbnail"></div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="col">
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='Distance' value=activity.distanceFriendly %}
+        </div>
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='Time' value=activity.timeFriendly %}
+        </div>
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='Pace' value=activity.paceFriendly %}
+        </div>
+        {% if activity.adjustedPaceFriendly %}
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='Adj. Pace' value=activity.adjustedPaceFriendly %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="row justify-content-center">
+        {% if activity.elevationFriendly %}
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='Elevation' value=activity.elevationFriendly %}
+        </div>
+        {% endif %}
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='Intensity' value=activity.intensity|safe|add:'% '|add:'('|add:activity.intensityFriendly|add:')' %}
+        </div>
+        {% if activity.averageHr %}
+        <div class="col-auto">
+          {% include 'components/statCard.html' with title='HR' value=activity.averageHr %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
 
 {% block content %}
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
@@ -11,25 +57,11 @@
   <div class="row"></div>
   <br>
   
-  {% include 'components/_helpbar.html' %}
+  {% include 'components/activityHelpbar.html' %}
   
-  {% if activity.description != "" %}
-  <a href="#desc" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="desc">
-    <div class="alert alert-default btn-default stretched-link" role="alert">
-      <span class="alert-icon"><i class="ni ni-single-copy-04"></i></span>
-      <span class="alert-text"><strong>Description</strong></span>
-    </div>
-  </a>
-  
-  <div id="desc" class="row justify-content-md-center">
-    <div class="col col-auto">
-      <div class="card card-stats">
-        <div class="card-body">
-          {{ activity.description | safe }}
-        </div>
-      </div>
-    </div>
-  </div>
+  {% if activity.description %}
+  {% include 'components/sectionHeader.html' with title='Description' href='description' %}
+  {% include 'components/figCard.html' with id='description' body=activity.description|safe %}
   {% endif %}
       
   <div class="dropdown-divider"></div>
@@ -37,208 +69,114 @@
   <div class="row justify-content-md-center">	
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <ul class="nav" role="tablist">
-        <li><label class="btn btn-secondary active nav-item" id="maps-tab" data-toggle="tab" href="#maps" role="tab" aria-controls="tab" aria-selected="true"><i class="alert-icon ni ni-map-big"></i>Maps</label></li>
-        <li><label class="btn btn-secondary nav-item" id="profiles-tab" data-toggle="tab" href="#profiles" role="tab" aria-controls="tab" aria-selected="false"><i class="alert-icon ni ni-sound-wave"></i>Profiles</label></li>
-        <li><label class="btn btn-secondary nav-item" id="laps-tab" data-toggle="tab" href="#laps-pane" role="tab" aria-controls="tab" aria-selected="false"><i class="alert-icon ni ni-chart-bar-32"></i>Laps</label></li>
-        <li><label class="btn btn-secondary nav-item" id="zones-tab" data-toggle="tab" href="#zones" role="tab" aria-controls="tab" aria-selected="false"><i class="alert-icon ni ni-chart-bar-32"></i>Zones</label></li>
+        {% include 'components/tabButton.html' with id='mapsTab' href='mapsPane' active='true' title='Maps' %}
+        {% include 'components/tabButton.html' with id='profilesTab' href='profilePane' title='Profiles' %}
+        {% include 'components/tabButton.html' with id='lapsTab' href='lapsPane' title='Laps' %}
+        {% include 'components/tabButton.html' with id='zonesTab' href='zonesPane' title='Zones' %}
       </ul>
     </div>
   </div>
   
   <div class="tab-content">
-  <div id="maps" class="tab-pane fade show active" role="tabpanel" aria-labelledby="maps-tab">
-    <a href="#map" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="map">
-      <div class="alert alert-default btn-default stretched-link" role="alert">
-        <span class="alert-icon"><i class="ni ni-map-big"></i></span>
-        <span class="alert-text"><strong>Map</strong></span>
-      </div>
-    </a>
-    
-    <div id="map">
-      <div class="row justify-content-md-center">
-        <div class="col col-auto">
-          <div class="card card-stats" style="width: 70rem; height:30rem">
-            <div class="card-body"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div id="mapsPane" class="tab-pane fade show active" role="tabpanel" aria-labelledby="mapsTab">
 
-    <a href="#3d" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="3d">
-      <div class="alert alert-default btn-default stretched-link" role="alert">
-        <span class="alert-icon"><i class="fa fa-cubes"></i></span>
-        <span class="alert-text"><strong>3D Model</strong></span>
-      </div>
-    </a>
+      {% include 'components/sectionHeader.html' with title='Map' href='map' %}
+      {% include 'components/figCard.html' with id='map' figId='annotatedMap' %}
 
-    <div id="3d">
-      <div class="row justify-content-md-center">
-        <div class="col col-auto">
-          <div class="card card-stats" style="width: 70rem; height:30rem">
-            <div class="card-body" id="3DModelGraph"></div>
-          </div>
-          </div>
-        </div>
+      {% include 'components/sectionHeader.html' with title='3D Model' href='3d' %}
+      {% include 'components/figCard.html' with id='3d' figId='3DModelGraph' %}
     </div>
-  </div>
-  
-  <div id="profiles" class="tab-pane fade" role="tabpanel" aria-labelledby="profiles-tab">
-    <a href="#profile" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="profile">
-      <div class="alert alert-default btn-default stretched-link" role="alert">
-        <span class="alert-icon"><i class="ni ni-sound-wave"></i></span>
-        <span class="alert-text"><strong>Profiles</strong></span>
-      </div>
-    </a>
     
-    <div id="profile">
-      <div class="alert alert-primary alert-dismissible fade show" role="alert">
-        <span class="alert-icon"><i class="ni ni-air-baloon"></i></span>
-        <span class="alert-text"><strong>Hint:</strong> Drag axes to shift data, click + drag to zoom, double click to reset axes, click legend items to show/hide data</span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+    <div id="profilePane" class="tab-pane fade" role="tabpanel" aria-labelledby="profilesTab">
+      {% include 'components/sectionHeader.html' with title='Profile' href='profile' %}
+      {% include 'components/figCard.html' with id='profile' figId='paceElevGraph' %}
+    </div>
+    
+    <div id="lapsPane" class="tab-pane fade" role="tabpanel" aria-labelledby="lapsTab">
+
+      {% include 'components/sectionHeader.html' with title='Auto Laps' href='autoLaps' %}
       
-      <div class="row justify-content-md-center">
-        <div class="col col-auto">
-          <div class="card card-stats" style="width: 70rem; height:30rem">
-            <div class="card-body" id="paceElevGraph"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div id="laps-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="laps-tab">
-    <a href="#laps" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="laps">
-      <div class="alert alert-default btn-default stretched-link" role="alert">
-        <span class="alert-icon"><i class="ni ni-chart-bar-32"></i></span>
-        <span class="alert-text"><strong>Laps</strong></span>
-      </div>
-    </a>
-    
-    <div id="laps" class="row justify-content-md-center">	
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <ul class="nav" role="tablist">
-          <li><label class="btn btn-secondary active nav-item" id="auto-tab" data-toggle="tab" href="#auto" role="tab" aria-controls="tab" aria-selected="true">Auto Laps</label></li>
-          <li><label class="btn btn-secondary nav-item" id="device-tab" data-toggle="tab" href="#device" role="tab" aria-controls="time" aria-selected="false">Device Laps</label></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div id="laps">
-      <div class="tab-content">
-        <div class="tab-pane fade show active" id="auto" role="tabpanel" aria-labelledby="auto-tab">
-          <div class="row justify-content-md-center">
-            <div class="col col-auto">
-              <div class="card card-stats" style="width: 35rem; height:30rem">
-                <div class="card-body">
-                    {{ g3 | safe }}
-                  </div>
-                </div>
-              </div>
-              <div clas="col col-auto">
-              <div class="card card-stats bg-default" style="width: 35rem; height:30rem">
-                <div class="card-body">
-                  <div class="table" style="width: 32rem; height:29rem">
-                    <table id="auto_lap_table" class="table table-hover table-dark table-striped table-borderless">
-                      <thead class="thead-dark">
-                        <th data-field="lap"><b>Lap</b></th>
-                        <th data-field="distance"><b>Dist</b></th>
-                        <th data-field="Time"><b>Time</b></th>
-                        <th data-field="pace"><b>Pace</b></th>
-                        <th data-field="gap"><b>GAP</b></th>
-                        <th data-field="gain"><b>Total<br>Gain</b></th>
-                        <th data-field="elev_change"><b>Elev<br>Change</b></th>
-                        <th data-field="avg_grade"><b>Avg<br>Grade</b></th>
-                        <th data-field="min_elev"><b>Min<br>Elev</b></th>
-                        <th data-field="max_elev"><b>Max<br>Elev</b></th>
-                        <th data-field="intensity"><b>Intensity</b></th>
-                      </thead>
-                      {{ auto_table | safe}}
-                    </table>
-                  </div>
-                </div>
-              </div>
+      <div id="autoLaps">
+        <div class="row justify-content-md-center">
+          <div class="col-6">
+            <div class="card card-stats">
+              <div class="card-body" id='lapsBarChartAuto'></div>
             </div>
           </div>
-        </div>
-        <div class="tab-pane fade show" id="device" role="tabpanel" aria-labelledby="device-tab">
-          <div class="row justify-content-md-center">
-            <div class="col col-auto">
-              <div class="card card-stats" style="width: 35rem; height:30rem">
-                <div class="card-body">
-                    {{ g4 | safe }}
-                </div>
-              </div>
-            </div>
-            <div clas="col col-auto">
-              <div class="card card-stats bg-default" style="width: 35rem; height:30rem">
-                <div class="card-body">
-                  <div class="table" style="width: 32rem; height:29rem">
-                    <table id="auto_lap_table" class="table table-hover table-dark table-striped table-borderless">
-                      <thead class="thead-dark">
-                        <th data-field="lap"><b>Lap</b></th>
-                        <th data-field="distance"><b>Dist</b></th>
-                        <th data-field="Time"><b>Time</b></th>
-                        <th data-field="pace"><b>Pace</b></th>
-                        <th data-field="gap"><b>GAP</b></th>
-                        <th data-field="gain"><b>Total<br>Gain</b></th>
-                        <th data-field="elev_change"><b>Elev<br>Change</b></th>
-                        <th data-field="avg_grade"><b>Avg<br>Grade</b></th>
-                        <th data-field="min_elev"><b>Min<br>Elev</b></th>
-                        <th data-field="max_elev"><b>Max<br>Elev</b></th>												  
-                        <th data-field="intensity"><b>Intensity</b></th>
-                      </thead>
-                      {{ device_table | safe}}
-                    </table>
-                  </div>
+          <div class="col-6">
+            <div class="card card-stats bg-default">
+              <div class="card-body">
+                <div class="table">
+                  <table id="auto_lap_table" class="table table-hover table-dark table-striped table-borderless">
+                    <thead class="thead-dark">
+                      <th data-field="lap"><b>Lap</b></th>
+                      <th data-field="distance"><b>Dist</b></th>
+                      <th data-field="Time"><b>Time</b></th>
+                      <th data-field="pace"><b>Pace</b></th>
+                      <th data-field="gap"><b>Adj. Pace</b></th>
+                      <th data-field="hr"><b>HR</b></th>
+                      <th data-field="intensity"><b>Intensity</b></th>
+                      <th data-field="gain"><b>Total<br>Gain</b></th>
+                      <th data-field="elev_change"><b>Elev<br>Change</b></th>
+                      <th data-field="min_elev"><b>Min<br>Elev</b></th>
+                      <th data-field="max_elev"><b>Max<br>Elev</b></th>
+                      <th data-field="avg_grade"><b>Avg<br>Grade</b></th>
+                    </thead>
+                    {{ autoLapsTable | safe}}
+                  </table>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div id="zones" class="tab-pane fade" role="tabpanel" aria-labelledby="zones-tab">
-    <a href="#paces" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="paces">
-      <div class="alert alert-default btn-default stretched-link" role="alert">
-        <span class="alert-icon"><i class="ni ni-chart-pie-35"></i></span>
-        <span class="alert-text"><strong>Pace Zones</strong></span>
-      </div>
-    </a>
-    
-    <div id="paces">	
-      <div class="row justify-content-md-center">
-        <div class="col col-auto">
-          <div class="card card-stats" style="width: 70rem; height:30rem">
-            <div class="card-body">
-              {{ g5 | safe }}									
+      {% include 'components/sectionHeader.html' with title='Device Laps' href='deviceLaps' %}
+
+      <div id="deviceLaps">
+        <div class="row justify-content-md-center">
+          <div class="col-6">
+            <div class="card card-stats">
+              <div class="card-body" id="lapsBarChartDevice"></div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card card-stats bg-default">
+              <div class="card-body">
+                <div class="table">
+                  <table id="auto_lap_table" class="table table-hover table-dark table-striped table-borderless">
+                    <thead class="thead-dark">
+                      <th data-field="lap"><b>Lap</b></th>
+                      <th data-field="distance"><b>Dist</b></th>
+                      <th data-field="Time"><b>Time</b></th>
+                      <th data-field="pace"><b>Pace</b></th>
+                      <th data-field="gap"><b>Adj. Pace</b></th>
+                      <th data-field="hr"><b>HR</b></th>
+                      <th data-field="intensity"><b>Intensity</b></th>
+                      <th data-field="gain"><b>Total<br>Gain</b></th>
+                      <th data-field="elev_change"><b>Elev<br>Change</b></th>
+                      <th data-field="min_elev"><b>Min<br>Elev</b></th>
+                      <th data-field="max_elev"><b>Max<br>Elev</b></th>
+                      <th data-field="avg_grade"><b>Avg<br>Grade</b></th>
+                    </thead>
+                    {{ deviceLapsTable | safe}}
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
-    
-    <a href="#gradeZones" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="gradeZones">
-      <div class="alert alert-default btn-default stretched-link" role="alert">
-        <span class="alert-icon"><i class="ni ni-chart-pie-35"></i></span>
-        <span class="alert-text"><strong>Grade Zones</strong></span>
-      </div>
-    </a>
-    
-    <div id="gradeZones">	
-      <div class="row justify-content-md-center">
-        <div class="col col-auto">
-          <div class="card card-stats" style="width: 70rem; height:30rem">
-            <div class="card-body" id="gradeZonesGraph"></div>
-          </div>
-        </div>
-      </div>
+
+    <div id="zonesPane" class="tab-pane fade" role="tabpanel" aria-labelledby="zonesTab">
+      {% include 'components/sectionHeader.html' with title='Pace Zones' href='paceZones' %}
+      {% include 'components/figCard.html' with id='paceZones' figId='paceZonesGraph' %}
+      
+      {% include 'components/sectionHeader.html' with title='Grade Zones' href='gradeZones' %}
+      {% include 'components/figCard.html' with id='gradeZones' figId='gradeZonesGraph' %}
     </div>
-  </div>
   </div>
   
 <div class="dropdown-divider"></div>
@@ -246,10 +184,39 @@
 
 {# Graph Callers #}
 {% block scripts %}
-{% if activity.hasStreams %}
-  <script>{% include 'js/getGraph.js' with graphName='paceElevGraph' %}</script>
-  <script>{% include 'js/getGraph.js' with graphName='mapThumbnail' %}</script>
-  <script>{% include 'js/getGraph.js' with graphName='3DModelGraph' %}</script>
-  <script>{% include 'js/getGraph.js' with graphName='gradeZonesGraph' %}</script>
-{% endif %}
+  {% if activity.hasStreams %}
+  <script type="text/javascript">
+    const activityJson = JSON.stringify({{ activityJson | safe }});
+    {% include 'js/getGraph.js' %}
+
+    {# Render mini map, main map, 3D model initially #}
+    {% if activity.latStream %}
+      getGraph('mapThumbnail');
+      getGraph('annotatedMap');
+    {% endif %}
+    {% if activity.elevationStream and activity.latStream %}
+      getGraph('3DModelGraph');
+    {% endif %}
+
+    const profilesTab = document.getElementById('profilesTab')
+    profilesTab.addEventListener('click', () => {
+      getGraph('paceElevGraph');
+    }, {'once': true});
+
+    const lapsTab = document.getElementById('lapsTab')
+    lapsTab.addEventListener('click', () => {
+      getGraph('lapsBarChartAuto');
+      getGraph('lapsBarChartDevice');
+    }, {'once': true});
+
+    const zonesTab = document.getElementById('zonesTab')
+    zonesTab.addEventListener('click', () => {
+      {% if activity.gradeStream %}
+      getGraph('gradeZonesGraph');
+      {% endif %}
+      {% if activity.paceStream %}
+      getGraph('paceZonesGraph');
+      {% endif %}
+    }, {'once': true});
+  {% endif %}
 {% endblock %}

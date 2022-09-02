@@ -15,6 +15,7 @@ def heatmap(latStream, lngStream):
     zauto=True,
     radius=2.25,
     showlegend=False,
+    showscale=False,
     colorscale='Plasma',
     below=''
   )
@@ -23,16 +24,13 @@ def heatmap(latStream, lngStream):
 
   # Update Layout
   fig.update_layout(
-    autosize=False,
-    width=1400,
-    height=690,
+    height=720,
     margin=dict(
-      pad=0,
       l=0,
       r=0,
       t=0,
       b=0,
-      autoexpand=False
+      autoexpand=True
     ),
     hovermode=False,
     mapbox=dict(

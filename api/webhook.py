@@ -37,7 +37,6 @@ def eventReceiver(request):
             try:
               formattedActivity = formatActivity(activity)
               activity = Activity.objects.create(athlete=athlete, **formattedActivity)
-              activity.calculateIntensity()
               activity.save()
               updatePolyline(activity, athlete)
             except IntegrityError:

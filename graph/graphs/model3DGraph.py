@@ -20,9 +20,11 @@ def model3DGraph(activity, athlete):
     showscale=True,
     colorscale=INTENSITYSCALE,
     colorbar=dict(
-      thickness=15,
+      thickness=20,
       x=0,
-      y=.5,
+      y=0,
+      yanchor='bottom',
+      len=0.7,
       tickfont=dict(size=8),
       tickangle=0,
       tickmode='array',
@@ -39,9 +41,11 @@ def model3DGraph(activity, athlete):
     showscale=True,
     colorscale=INTENSITYSCALE,
     colorbar=dict(
-      thickness=15,
+      thickness=20,
       x=0,
-      y=.5,
+      y=0,
+      yanchor='bottom',
+      len=0.7,
       tickfont=dict(size=8),
       tickangle=0,
       tickmode='array',
@@ -62,9 +66,11 @@ def model3DGraph(activity, athlete):
     colorscale=GRADE_SCALE,
     reversescale=False,
     colorbar=dict(
-      thickness=15,
+      thickness=20,
       x=0,
-      y=.5,
+      y=0,
+      yanchor='bottom',
+      len=0.7,
       tickfont=dict(size=8),
       tickangle=0,
     )
@@ -97,21 +103,22 @@ def model3DGraph(activity, athlete):
     elevationHoverInfo,
     gradeHoverInfo
   ))
-  lineTrace = go.Scatter3d(
-    y=activity['streams']['latStream'],
-    x=activity['streams']['lngStream'],
-    z=elevationStream,
-    mode='lines',
-    line=defaultLine,
-    hoverinfo='text',
-    hovertext=hoverInfo,
-    projection=dict(
-      y=dict(show=True),
-      x=dict(show=True)
-    ),
-    surfacecolor=COLORS['transparentGray']
+  fig.add_trace(
+    go.Scatter3d(
+      y=activity['streams']['latStream'],
+      x=activity['streams']['lngStream'],
+      z=elevationStream,
+      mode='lines',
+      line=defaultLine,
+      hoverinfo='text',
+      hovertext=hoverInfo,
+      projection=dict(
+        y=dict(show=True),
+        x=dict(show=True)
+      ),
+      surfacecolor=COLORS['transparentGray']
+    )
   )
-  fig.add_trace(lineTrace)
 
   # Update Layout
   maxElev = max(elevationStream)
@@ -209,9 +216,9 @@ def model3DGraph(activity, athlete):
         bordercolor=COLORS['blue'],
         borderwidth=1.5,
         showactive=True,
-        x=.075,
+        x=0,
         xanchor="left",
-        y=0.9,
+        y=0.92,
         yanchor="bottom"
       ), 
       dict(
@@ -230,9 +237,9 @@ def model3DGraph(activity, athlete):
         bgcolor=COLORS['gray1'],
         borderwidth=1.5,
         showactive=True,
-        x=.39,
+        x=0,
         xanchor="left",
-        y=0.9,
+        y=0.72,
         yanchor="bottom"
       ), 
       dict(
@@ -242,7 +249,7 @@ def model3DGraph(activity, athlete):
           dict(
             args2=['line', adjustedPaceZones],
             args=['line', defaultLine],
-            label='<b>Toggle Pace Zones (GAP)</b>',
+            label='<b>Toggle Adj. Pace Zones</b>',
             method='restyle'
           )
         ],
@@ -251,9 +258,9 @@ def model3DGraph(activity, athlete):
         bgcolor=COLORS['gray1'],
         borderwidth=1.5,
         showactive=True,
-        x=.215,
+        x=0,
         xanchor="left",
-        y=0.9,
+        y=0.82,
         yanchor="bottom"
       )
     ]

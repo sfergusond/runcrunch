@@ -1,20 +1,26 @@
+from asyncio import streams
 import plotly.graph_objects as go
 import math
 
 from ..utils.constants import COLORS
-from ..utils.tickInfo import tickInfo
-from ..utils.hoverInfo import getElevationHoverInfo, getPaceHoverInfo, getHrHoverInfo
+from ..utils.tickInfo import tickInfoStdDev
+from ..utils.hoverInfo import (
+  getElevationHoverInfo,
+  getPaceHoverInfo,
+  getHrHoverInfo,
+  getGradeHoverInfo
+)
 from utils.convert import convertStream
 
-def paceElevGraph(
-  distanceStream,
-  paceStream, 
-  adjustedPaceStream, 
-  elevationStream, 
-  hrStream,
-  athlete
-  ):
+def paceElevGraph(activity, athlete):
   unitPref = athlete.unitPreference
+  streams = activity['streams']
+  distanceStream = streams.get('distanceStream')
+  paceStream = streams.get('paceStream')
+  elevationStream = streams.get('elevationStream')
+  adjustedPaceStream = streams.get('adjustedPaceStream')
+  hrStream = streams.get('hrStream')
+  gradeStream = streams.get('gradeStream')
   fig = go.Figure()
   
   distanceStream = convertStream(
@@ -23,7 +29,7 @@ def paceElevGraph(
   )
   
   paceHoverInfo = getPaceHoverInfo(paceStream, unitPref)
-  paceTickInfo = tickInfo(paceStream)
+  paceTickInfo = tickInfoStdDev(paceStream)
   fig.add_trace(
     go.Scatter(
       name='Pace',
@@ -35,7 +41,7 @@ def paceElevGraph(
       line=dict(
         width=2,
         shape='spline',
-        smoothing=1.1,
+        smoothing=1.3,
         color=COLORS['blue'],
         simplify=True
       ),
@@ -44,7 +50,7 @@ def paceElevGraph(
     )
   )
   
-  if sum(elevationStream) > 1:
+  if elevationStream:
     if unitPref == 'I':
       elevationStream = convertStream(elevationStream, 'metersToFeet')
     elevationHoverInfo = getElevationHoverInfo(elevationStream, unitPref)
@@ -67,10 +73,28 @@ def paceElevGraph(
         hovertext=elevationHoverInfo
       )
     )
+    
+  if gradeStream:
+    gradeHoverInfo = getGradeHoverInfo(gradeStream)
+    fig.add_trace(
+      go.Scatter(
+        name='Grade',
+        x=distanceStream,
+        y=gradeStream,
+        mode='text',
+        yaxis='y',
+        line=dict(
+          color=COLORS['transparent'],
+        ),
+        hoverinfo='x+name+text',
+        hovertext=gradeHoverInfo,
+        showlegend=False
+      )
+    )
   
-  if sum(adjustedPaceStream) > 0:
+  if adjustedPaceStream:
     adjustedPaceHoverInfo = getPaceHoverInfo(adjustedPaceStream, unitPref)
-    adjustedPaceTickInfo = tickInfo(adjustedPaceStream)
+    adjustedPaceTickInfo = tickInfoStdDev(adjustedPaceStream)
     fig.add_trace(
       go.Scatter(
         name='Adj. Pace',
@@ -94,7 +118,7 @@ def paceElevGraph(
   else:
     adjustedPaceTickInfo = [None, -1, math.inf, None]
 
-  if sum(hrStream) > 0:
+  if hrStream:
     hrHoverInfo = getHrHoverInfo(hrStream)
     fig.add_trace(
       go.Scatter(
@@ -118,8 +142,11 @@ def paceElevGraph(
     )
 
   # Axis Settings
-  maxElev = max(elevationStream)
-  minElev = min(elevationStream)
+  if elevationStream:
+    maxElev = max(elevationStream)
+    minElev = min(elevationStream)
+  else:
+    maxElev, minElev = 0, 0
   rangePace = [
     min(paceTickInfo[1], adjustedPaceTickInfo[1]),
     max(paceTickInfo[-2], adjustedPaceTickInfo[-2])
@@ -192,17 +219,16 @@ def paceElevGraph(
       rpad = 70
 
   fig.update_layout(
+    height=500,
     plot_bgcolor=COLORS['transparent'],
     paper_bgcolor=COLORS['transparent'],
-    width=1110,
-    height=450,
     margin=dict(
       pad=0,
-      l=175,
+      l=0,
       r=rpad,
       t=0,
       b=15,
-      autoexpand=False
+      autoexpand=True
     ),
     font=dict(
       color=COLORS['text']
@@ -227,6 +253,7 @@ def paceElevGraph(
     include_plotlyjs=False,
     include_mathjax=False,
     full_html=False,
+    default_width='100%',
     config={'displayModeBar': False}
   )
   

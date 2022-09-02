@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RunCrunch - Trends{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+
+<div class="row"></div>
+<br>
+
+<div class="row justify-content-md-center">	
+  <div class="btn-group btn-group-toggle">
+    <ul class="nav" role="tablist">
+      {% include 'components/tabButton.html' with id='distanceTab' active='true' title='Distance' %}
+      {% include 'components/tabButton.html' with id='timeTab' title='Time' %}
+      {% include 'components/tabButton.html' with id='paceTab' title='Pace' %}
+      {% include 'components/tabButton.html' with id='elevationTab' title='Elevation' %}
+      {% include 'components/tabButton.html' with id='heartRateTab' title='Heart Rate' %}
+    </ul>
+  </div>
+</div>
+
+{% include 'components/sectionHeader.html' with title='Trends - Weekly' %}
+{% include 'components/figCard.html' with id='trendsWeekly' figId='weeklyChart' %}
+
+{% include 'components/sectionHeader.html' with title='Trends - Monthly' %}
+{% include 'components/figCard.html' with id='trendsMonthly' figId='monthlyChart' %}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  {% include 'js/getTrendsBarChart.js' %}
+
+  {# Load distance chart by default #}
+  getTrendsBarChart('distance', 'weekly');
+  getTrendsBarChart('distance', 'monthly');
+
+  {# One event listener per button #}
+  const distanceTab = document.getElementById('distanceTab')
+  distanceTab.addEventListener('click', () => {
+    getTrendsBarChart('distance', 'weekly');
+    getTrendsBarChart('distance', 'monthly');
+  });
+
+  const timeTab = document.getElementById('timeTab')
+  timeTab.addEventListener('click', () => {
+    getTrendsBarChart('time', 'weekly');
+    getTrendsBarChart('time', 'monthly');
+  });
+
+  const paceTab = document.getElementById('paceTab')
+  paceTab.addEventListener('click', () => {
+    getTrendsBarChart('pace', 'weekly');
+    getTrendsBarChart('pace', 'monthly');
+  });
+
+  const elevationTab = document.getElementById('elevationTab')
+  elevationTab.addEventListener('click', () => {
+    getTrendsBarChart('elevation', 'weekly');
+    getTrendsBarChart('elevation', 'monthly');
+  });
+
+  const heartRateTab = document.getElementById('heartRateTab')
+  heartRateTab.addEventListener('click', () => {
+    getTrendsBarChart('averageHr', 'weekly');
+    getTrendsBarChart('averageHr', 'monthly');
+  });
+</script>
+{% endblock %}

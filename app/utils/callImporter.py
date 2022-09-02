@@ -1,9 +1,8 @@
-from distutils.command.upload import upload
+from django.urls import reverse
 from django.conf import settings
 
 import boto3
 import json
-import os
 
 client = boto3.client(
   'lambda',
@@ -12,13 +11,19 @@ client = boto3.client(
   aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
 )
 
-def callImporter(athlete):
-  baseCallbackUrl = os.environ.get('IMPORTER_CALLBACK_URL', settings.DOMAIN) 
+def callImporter(request):
+  if settings.DEBUG:
+    uploadEndpoint = settings.DOMAIN + reverse('bulkActivityCreate')
+  else:
+    uploadEndpoint = request.build_absolute_uri(
+      reverse('bulkActivityCreate')
+    )
   payload = {
-    'token': athlete.accessToken,
-    'athleteId': athlete.id,
-    'uploadEndpoint': baseCallbackUrl + '/api/activity/bulk/create/'
+    'token': request.athlete.accessToken,
+    'athleteId': request.athlete.id,
+    'uploadEndpoint': uploadEndpoint
   }
+  print('Importer Payload:', payload)
   payload = json.dumps(payload).encode('utf-8')
   client.invoke(
     FunctionName=settings.IMPORTER_SERVICE_FUNCTION_NAME,

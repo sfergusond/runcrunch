@@ -9,8 +9,15 @@ import time
 import statistics
 import json
 
-from utils import convert
+from utils.convert import (
+  CONVERSIONS,
+  speedToPace,
+  distanceFriendly,
+  intensityFriendly,
+  removeNonMovingFromStream
+)
 from utils.adjustedPace import getPaceMultiplier
+from utils.calculateIntensity import calculateIntensity
 
 class Athlete(models.Model):
   stravaId = models.IntegerField(
@@ -79,22 +86,22 @@ class Athlete(models.Model):
     prPace = self.prDistance / self.prTime
     easyPace = (
       prPace * (
-        convert.CONVERSIONS['metersToMiles'](self.prDistance)**0.07
+        CONVERSIONS['metersToMiles'](self.prDistance)**0.07
       )
     ) / 2.25
     return easyPace
   
   def getRelativePrPace(self, distance):
     prPace = self.prDistance / self.prTime
-    relativePace = (prPace * ((self.prDistance/distance)**0.07))
+    relativePace = (prPace * ((self.prDistance / distance) ** 0.07))
     return relativePace
   
   def getPrFriendly(self):
-    time = convert.speedToPace(
+    time = speedToPace(
       self.prDistance / self.prTime,
       self.unitPreference
     )
-    distance = convert.distanceFriendly(
+    distance = distanceFriendly(
       self.prDistance,
       self.unitPreference
     )
@@ -118,105 +125,93 @@ class Activity(models.Model):
     null=True,
     blank=True
   )
-  intensity = models.DecimalField(
-    max_digits=20,
-    decimal_places=2,
-    null=True,
-    blank=True
-  )
   title = models.CharField(
     max_length=500
-  )
-  startLat = models.DecimalField(
-    decimal_places=16,
-    max_digits=25,
-    null=True,
-    blank=True
-  )
-  startLng = models.DecimalField(
-    decimal_places=16,
-    max_digits=25,
-    null=True,
-    blank=True
   )
   athlete = models.ForeignKey(
     Athlete,
     on_delete=models.CASCADE
   )
-  
-  def calculateIntensity(self, adjustedSpeed=None):
-    athlete = self.athlete
-    if not athlete.prDistance or not athlete.prTime:
-      return None
-    easyPace = 2.06 # 13 min/mile
-    if not adjustedSpeed:
-      speed = self.distance / self.time
-    else:
-      speed = adjustedSpeed
-    speed = speed - easyPace
-    prSpeed = athlete.prDistance / athlete.prTime
-    prEffort = (
-      prSpeed * (
-        (athlete.prDistance / self.distance) ** 0.07
-        )
-      ) - easyPace
-    intensity = round((speed/prEffort) * 100, 2)
-    self.intensity = intensity
-    self.save()
-    return intensity
 
   def getFriendlyStats(self):
     unitPref = self.athlete.unitPreference
     convertImperial = unitPref == 'I'
     client = stravalib.Client(access_token=self.athlete.accessToken)
     stravaActivity = client.get_activity(self.stravaId)
+    
     self.description = stravaActivity.description
+    
     self.distanceFriendly = (
       unithelper.miles(stravaActivity.distance) if convertImperial 
       else unithelper.kilometers(stravaActivity.distance)
     )
+    
     self.timeFriendly = stravaActivity.moving_time
+    
     self.elevationFriendly = (
       unithelper.feet(stravaActivity.total_elevation_gain) if convertImperial
       else round(stravaActivity.total_elevation_gain)
     )
-    self.paceFriendly = convert.speedToPace(stravaActivity.average_speed, unitPref)
+    
     if self.hasStreams:
-      try:
-        adjustedSpeed = statistics.mean(self.adjustedPaceStream)
-        self.adjustedPaceFriendly = convert.speedToPace(adjustedSpeed, unitPref)
-        self.intensity = self.calculateIntensity(adjustedSpeed=adjustedSpeed)
-      except Exception as e:
-        print(e)
-        pass
-    self.intensityFriendly = convert.intensityFriendly(self.intensity)
+      calculatedPace = statistics.mean(
+        removeNonMovingFromStream(self.paceStream, self.movingStream)
+      )
+      adjustedPace = statistics.mean(
+        removeNonMovingFromStream(self.adjustedPaceStream, self.movingStream)
+      )
+      
+      self.adjustedPaceFriendly = speedToPace(adjustedPace, unitPref)
+      self.paceFriendly = speedToPace(calculatedPace, unitPref)
+      self.intensity = calculateIntensity(self.athlete, adjustedPace, self.distance)
+        
+      self.laps = [{
+        'startIndex': lap.start_index,
+        'endIndex': lap.end_index,
+        'time': lap.moving_time.seconds,
+        'distance': int(lap.distance),
+        'elevation': int(lap.total_elevation_gain),
+        'velocity': float(lap.average_speed),
+        'heartrate': float(lap.average_heartrate),
+        'index': lap.lap_index
+      } for lap in stravaActivity.laps]
+    else:
+      self.paceFriendly = speedToPace(stravaActivity.average_speed, unitPref)
+      self.intensity = calculateIntensity(
+        self.athlete,
+        self.distance / self.time,
+        self.distance
+      )
+      
+    self.intensityFriendly = intensityFriendly(self.intensity)
     
   def getStreams(self):
     self.hasStreams = False
     streamTypes = [
-      'distance',
-      'velocity_smooth',
-      'grade_smooth',
-      'altitude',
-      'latlng',
-      'heartrate'
+      ('distance', 'distance'),
+      ('velocity_smooth', 'pace'),
+      ('time', 'time'),
+      ('grade_smooth', 'grade'),
+      ('altitude', 'elevation'),
+      ('latlng', 'latlng'),
+      ('heartrate', 'hr'),
+      ('moving', 'moving'),
     ]
     client = stravalib.Client(access_token=self.athlete.accessToken)
-    streams = client.get_activity_streams(self.stravaId, types=streamTypes)
+    streams = client.get_activity_streams(
+      self.stravaId,
+      types=[t[0] for t in streamTypes]
+    )
     if streams:
       self.hasStreams = True
-      self.distanceStream = streams.get('distance', {}).to_dict().get('data', [])
-      streamLen = len(self.distanceStream)
-      getNoneStream = lambda k : ([(None, None)] if k == 'latlng' else [None]) * streamLen
-      getStream = lambda k : streams.get(k, {}).to_dict().get('data', getNoneStream(k))
-      self.paceStream = getStream('velocity_smooth')
-      self.gradeStream = getStream('grade_smooth')
-      self.elevationStream = getStream('altitude')
-      self.hrStream = getStream('heartrate')
-      latlngStream = getStream('latlng')
-      self.latStream = [i[0] for i in latlngStream]
-      self.lngStream = [i[1] for i in latlngStream]
-      self.adjustedPaceStream = getNoneStream('')
+      getStream = lambda k : streams.get(k, {}).to_dict().get('data', None)
+      for type, attrName in streamTypes:
+        if type == 'latlng':
+          latlngStream = getStream('latlng')
+          setattr(self, 'latStream', [i[0] for i in latlngStream])
+          setattr(self, 'lngStream', [i[1] for i in latlngStream])
+        setattr(self, f'{attrName}Stream', getStream(type))
+      self.adjustedPaceStream = None
       if {'grade_smooth', 'velocity_smooth', 'altitude'}.issubset(streams.keys()):
         self.adjustedPaceStream = list(
           map(
@@ -232,6 +227,8 @@ class Activity(models.Model):
     if getattr(self, 'hasStreams', False):
       streams = {k:v for k, v in self.__dict__.items() if 'Stream' in k}
       serialized['streams'] = streams
+    if getattr(self, 'laps', False):
+      serialized['laps'] = self.laps
     serialized = json.dumps(serialized)
     return serialized
     

@@ -84,7 +84,4 @@ jQuery.extend( jQuery.fn.dataTableExt.oSort, {
   "time-uni-desc": function (a, b) {
     return ((a < b) ? 1 : ((a > b) ? -1 : 0));
   }
-})
-.catch((error) => {
-  console.log(error);
 });

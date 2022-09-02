@@ -1,0 +1,11 @@
+<a 
+  href="#{{ href }}"
+  data-toggle="collapse"
+  role="button"
+  aria-expanded="{% if notExpanded %}false{% else %}true{% endif %}"
+  aria-controls="{{ href }}"
+>
+  <div class="alert alert-default btn-default stretched-link" role="alert">
+    <span class="alert-text"><strong>{{ title }}</strong></span>
+  </div>
+</a>

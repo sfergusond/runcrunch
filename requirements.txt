@@ -9,3 +9,4 @@ stravalib==0.10.4
 plotly==5.10.0
 numpy==1.23.2
 pandas==1.4.3
+django_storages==1.10.1

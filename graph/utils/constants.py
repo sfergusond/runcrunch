@@ -1,3 +1,5 @@
+import math
+
 COLORS = {
   'background': '#111111',
   'text': 'black',
@@ -34,6 +36,7 @@ COLORS = {
   'Tempo': "#f29624",
   'VO2 Max': "#fa0c0c",
   'Race':'#fc0dec',
+  'Race/Anaerobic':'#fc0dec',
   '': 'rgba(255,255,255,0)'
 }
 
@@ -82,6 +85,18 @@ INTENSITY_TICK_TEXT = [
   'Tempo',
   'VO2 Max',
   'Race',
+]
+INTENSITY_BINS = [
+  -math.inf,
+  0.3,
+  0.425,
+  0.575,
+  0.7,
+  0.8,
+  0.9,
+  0.95,
+  1,
+  math.inf
 ]
 
 GRADE_SCALE =  [
