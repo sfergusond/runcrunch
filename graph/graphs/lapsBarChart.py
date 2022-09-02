@@ -1,5 +1,4 @@
 import statistics
-from turtle import speed
 import plotly.graph_objects as go
 
 from ..utils.tickInfo import tickInfoStdDev
