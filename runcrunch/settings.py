@@ -135,7 +135,7 @@ STATICFILES_DIRS = [
   ('css', os.path.join(BASE_DIR, 'staticBase', 'css')),
   ('img', os.path.join(BASE_DIR, 'staticBase', 'img')),
 ]
-if not DEBUG:
+if DEBUG:
   STATIC_URL = '/static/'
   STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
   WHITENOISE_MANIFEST_STRICT = False
