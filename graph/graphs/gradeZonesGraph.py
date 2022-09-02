@@ -64,11 +64,12 @@ def gradeZonesGraph(activity, athlete):
   ceil = (math.ceil(max(list(gradeBins))*10)*10)/100
   ticks = list(np.arange(0, ceil, ceil/10))
   fig.update_layout(
-    plot_bgcolor='rgba(0,0,0,0)',
-    paper_bgcolor='rgba(0,0,0,0)',
-    width=1024,
-    height=450,
-    margin=dict(l=0,r=0,t=0,b=0),
+    plot_bgcolor=COLORS['transparent'],
+    paper_bgcolor=COLORS['transparent'],
+    margin=dict(
+      l=0, r=0, t=0, b=0,
+      autoexpand=True
+    ),
     xaxis=dict(
       tickformat='+f',
       ticksuffix='%',

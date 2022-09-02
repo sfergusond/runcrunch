@@ -11,8 +11,10 @@ from .models import Athlete, Activity
 from .utils.callImporter import callImporter
 from .utils.getActivityStatsForPeriod import getActivityStatsForPeriod
 from utils.calendar import getNextSunday
+from graph.utils.getLaps import getLapsTable, getDeviceLaps, getAutoLaps
 
 import datetime
+import json
 
 def register(request):
   if request.method == 'POST':
@@ -70,7 +72,7 @@ def account(request):
         athlete=request.athlete
       ).count()
       if activityCount < 1000:
-        callImporter(request.athlete)
+        callImporter(request)
     if 'prForm' in request.POST:
       if prForm.is_valid():
         prForm.save(request.athlete)
@@ -82,11 +84,11 @@ def account(request):
     unitPreference = UnitPreference({
       'metric': request.athlete.unitPreference
     })
-    accountStats = getActivityStatsForPeriod(
-      datetime.date.min,
-      datetime.date.max,
-      request.athlete
-    )
+  accountStats = getActivityStatsForPeriod(
+    datetime.date.min,
+    datetime.date.max,
+    request.athlete
+  )
   return render(
     request,
     'pages/account.html',
@@ -138,12 +140,18 @@ def viewActivity(request, activityId):
   activity.getStreams()
   activity.getFriendlyStats()
   activityJson = activity.toJson()
-  #print(activity.__dict__)
+  activityJsonDict = json.loads(activityJson)
+  autoLaps = getAutoLaps(activityJsonDict, request.athlete)
+  autoLapsTable = getLapsTable(autoLaps, request.athlete.unitPreference)
+  deviceLaps = getDeviceLaps(activityJsonDict, request.athlete)
+  deviceLapsTable = getLapsTable(deviceLaps, request.athlete.unitPreference)
   return render(
     request,
     'pages/viewActivity.html',
     {
       'activity': activity,
-      'activityJson': activityJson
+      'activityJson': activityJson,
+      'autoLapsTable': autoLapsTable,
+      'deviceLapsTable': deviceLapsTable
     }
   )

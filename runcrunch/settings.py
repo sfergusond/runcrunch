@@ -14,7 +14,7 @@ import os
 import dj_database_url
 
 if 'sferg' in os.path.expanduser('~'):
-    import __docs__.__secrets__
+  import __docs__.__secrets__
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = 'sferg' in os.path.expanduser('~')
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
-DOMAIN = 'http://localhost:8000' if DEBUG else 'https://runcrunch.herokuapp.com'
+DOMAIN = 'https://XXXX.ngrok.io' if DEBUG else 'https://www.run-crunch.com'
 
 # Application definition
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
   
   'django.contrib.admin',
   'django.contrib.auth',
+  'storages',
 ]
 
 MIDDLEWARE = [
@@ -123,34 +124,36 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 STATICFILES_FINDERS =  [
   'django.contrib.staticfiles.finders.FileSystemFinder',
   'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-  ]
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'
+AWS_STORAGE_BUCKET_NAME = 'runcrunch-static'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
-  os.path.join(BASE_DIR, 'runcrunch/static'),
-  ("css", os.path.join(STATIC_ROOT, 'css')),
-  ("img", os.path.join(STATIC_ROOT, 'img')),
-  ("js", os.path.join(STATIC_ROOT, 'js')),
+  os.path.join(BASE_DIR, 'staticBase'),
+  ('css', os.path.join(BASE_DIR, 'staticBase', 'css')),
+  ('img', os.path.join(BASE_DIR, 'staticBase', 'img')),
 ]
+if not DEBUG:
+  STATIC_URL = '/static/'
+  STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+  WHITENOISE_MANIFEST_STRICT = False
+else:
+  STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}/'
+  STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 LOGIN_REDIRECT_URL = '/dashboard'
-LOGIN_URL = '/login'
+LOGIN_URL = '/user/login'
 LOGOUT_REDIRECT_URL = '/'
 
 AUTHENTICATION_BACKENDS = (
- 'django.contrib.auth.backends.ModelBackend',
- )
+  'django.contrib.auth.backends.ModelBackend',
+)
 
 SITE_ID = 4
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-WHITENOISE_MANIFEST_STRICT = False
-
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # SMPT CONFIG
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

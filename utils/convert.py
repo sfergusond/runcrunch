@@ -1,5 +1,5 @@
 import datetime
-import pandas as pd
+from pandas import isna
 
 CONVERSIONS = {
   'metersToMiles': lambda x: x / 1609.34,
@@ -12,7 +12,7 @@ CONVERSIONS = {
 
 def convertStream(stream, conversion):
   stream = list(map(lambda x : CONVERSIONS[conversion](x), stream))
-  return stream
+  return stream 
 
 def speedToPace(speed, unitType):
   pace = 0
@@ -33,6 +33,8 @@ def speedToPace(speed, unitType):
   return pace
     
 def timeFriendly(time, precision='seconds'):
+  if isna(time):
+    return ''
   if precision == 'seconds':
     timeFriendly = str(datetime.timedelta(seconds=time))
   elif precision == 'minutes':
@@ -69,6 +71,8 @@ def intensityFriendly(intensity):
   return ''
 
 def distanceFriendly(distance, unitPref):
+  if isna(distance):
+    return ''
   if unitPref == 'I':
     distance = round(CONVERSIONS['metersToMiles'](distance), 2)
     distance = f'{distance} mi'
@@ -79,7 +83,7 @@ def distanceFriendly(distance, unitPref):
     return distance
   
 def elevationFriendly(elevation, unitPref):
-  if not elevation or pd.isna(elevation):
+  if not elevation or isna(elevation):
     return ''
   if unitPref == 'I':
     elevation = round(CONVERSIONS['metersToFeet'](elevation))
@@ -89,3 +93,19 @@ def elevationFriendly(elevation, unitPref):
     elevation = round(elevation)
     elevation = f'{elevation} m'
     return elevation
+  
+def gradeFriendly(grade):
+  if isna(grade):
+    return ''
+  return str(round(grade)) + '%'
+
+def heartrateFriendly(hr):
+  if isna(hr):
+    return ''
+  return str(round(hr)) + ' bpm'
+
+def removeNonMovingFromStream(stream, movingStream):
+  nonMovingStream = [
+    point for point, moving in zip(stream, movingStream) if moving
+  ]
+  return nonMovingStream

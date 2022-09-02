@@ -1,11 +1,12 @@
 import statistics
 
-SPACE_LIST = [-5, -3, -2, -1, 0, 1, 2, 3, 5]
-
-def tickInfo(series, space_list=SPACE_LIST):
-  mean = statistics.mean(series)
-  stdev = statistics.stdev(series)
-  ticks = [mean + (i * stdev) for i in space_list]
+def tickInfoStdDev(series, spaceList=[-5, -3, -2, -1, 0, 1, 2, 3, 5]):
+  try:
+    mean = statistics.mean(series)
+    stdev = statistics.stdev(series)
+    ticks = [mean + (i * stdev) for i in spaceList]
+  except:
+    ticks = []
   return ticks
 
 def getIntensityTicks(easyPace, prPace):

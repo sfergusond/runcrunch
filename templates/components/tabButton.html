@@ -1,0 +1,13 @@
+<li>
+  <label
+    class="btn btn-secondary nav-item {% if active %}active{% endif %}"
+    id="{{ id }}"
+    data-toggle="tab"
+    href="#{{ href }}"
+    role="tab"
+    aria-controls="tab"
+    aria-selected="{{ active|default:'false' }}"
+  >
+    {{ title }}
+  </label>
+</li>

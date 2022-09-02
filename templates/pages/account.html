@@ -6,90 +6,25 @@
 <div class="row"></div>
 <br>
 
-<a href="#lifetime-totals" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="lifetime-totals">
-    <div class="alert alert-default btn-default bg-gradient-warning stretched-link" role="alert" style="border:0px">
-      <span class="alert-icon"><i class="ni ni-chart-bar-32"></i></span>
-      <span class="alert-text"><strong>Lifetime Totals</strong></span>
+{% include 'components/sectionHeader.html' with title='Account Totals' href='accountTotals' %}
+  <div id="accountTotals" class="row justify-content-md-center">
+    <div class="col-auto">
+      {% include 'components/statCard.html' with title='Distance' value=accountStats.distance %}
     </div>
-</a>
-
-  <div id="lifetime-totals" class="row justify-content-md-center">
-  <div class="col-auto">
-    <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col">
-            <h5 class="card-title text-uppercase text-muted mb-0">Distance</h5>
-            <span class="h2 font-weight-bold mb-0">{{ accountStats.distance }}</span>
-          </div>
-          <div class="col-auto">
-            <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-            <i class="ni ni-square-pin"></i>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="col-auto">
+      {% include 'components/statCard.html' with title='Time' value=accountStats.time %}
     </div>
-  </div>
-  <div class="col-auto">
-  <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col">
-            <h5 class="card-title text-uppercase text-muted mb-0">Time</h5>
-            <span class="h2 font-weight-bold mb-0">{{ accountStats.time }}</span>
-          </div>
-          <div class="col-auto">
-            <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
-              <i class="fa fa-clock-o"></i>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="col-auto">
+      {% include 'components/statCard.html' with title='Elevation' value=accountStats.elevation %}
     </div>
-  </div>
-  <div class="col-auto">
-  <div class="card card-stats">
-      <div class="card-body">
-        <div class="row">
-          <div class="col">
-            <h5 class="card-title text-uppercase text-muted mb-0">Elevation Gain</h5>
-            <span class="h2 font-weight-bold mb-0">{{ accountStats.elevation }}</span>
-          </div>
-          <div class="col-auto">
-            <div class="icon icon-shape bg-gradient-warning text-white rounded-circle shadow">
-            <i class="ni ni-image"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-auto">
-    <div class="card card-stats">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Activities</h5>
-              <span class="h2 font-weight-bold mb-0">{{ accountStats.count }}</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
-              <i class="ni ni-trophy"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="col-auto">
+      {% include 'components/statCard.html' with title='Activities' value=accountStats.count %}
     </div>
   </div>
 
-<div class="alert alert-default btn-default bg-gradient-warning stretched-link" role="alert" style="border:0px">
-  <span class="alert-icon"><i class="ni ni-watch-time"></i></span>
-  <span class="alert-text"><strong>Current Best Effort:</strong></span>
-  <span class="alert-text" style="padding-left:2%">
-    {{ request.athlete.getPrFriendly }}
-  </span>
+{% include 'components/sectionHeader.html' with title='Current Best Effort' %}
+<div class="row justify-content-md-center my-2">
+  <span class="font-weight-bold">Current Best Effort: {{ request.athlete.getPrFriendly }}</span>
 </div>
 <div class="row justify-content-md-center">
   <div class="col-md-4">
@@ -145,11 +80,10 @@
   </div>
 </div>
 
-<div class="alert alert-default btn-default bg-gradient-warning stretched-link" role="alert" style="border:0px">
-  <span class="alert-icon"><i class="ni ni-ruler-pencil"></i></span>
-  <span class="alert-text"><strong>Current Unit Preference:</strong></span>
-  <span class="alert-text" style="padding-left:2%">
-    {% if request.athlete.unitPreference == 'I' %} Imperial (miles, feet) {% else %} Metric (kilometers, meters) {% endif %}
+{% include 'components/sectionHeader.html' with title='Current Unit Preference' %}
+<div class="row justify-content-md-center my-2">
+  <span class="font-weight-bold">
+    Current Preference: {% if request.athlete.unitPreference == 'I' %}Standard (miles, feet){% else %}Metric (kilometers, meters){% endif %}
   </span>
 </div>
 <div class="row justify-content-md-center">

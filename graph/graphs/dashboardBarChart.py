@@ -2,25 +2,13 @@ import pandas as pd
 import plotly.graph_objects as go
 import datetime
 
-from app.models import Activity
 from ..utils.constants import COLORS
+from ..utils.getActivityDataFrame import getActivityDataFrame
 from utils.convert import (
   timeFriendly,
   distanceFriendly,
   elevationFriendly
 )
-
-def getActivityDataFrame(athlete, metric, fromDate, toDate):
-  activities = Activity.objects.filter(
-    athlete=athlete
-  ).filter(
-    timestamp__gte=fromDate
-  ).filter(
-    timestamp__lte=toDate + datetime.timedelta(days=1)
-  ).values('timestamp', metric)
-  df = pd.DataFrame(activities)
-  df.timestamp = pd.to_datetime(df.timestamp)
-  return df
 
 def getActivityMatrix(df, maxStacks):
   matrix = [ [ 0 ] * len(df.index) for i in range(maxStacks) ] 
@@ -83,14 +71,16 @@ def getWeeklySpanTickPoints(df):
 def getBarAnnotations(matrix, unitPref, metric, xIndex):
   barTotals = list(map(sum, zip(*matrix)))
   maxY = max(barTotals)
-  bump = 25 * (maxY / 1000)
+  bump = (25 if len(xIndex) < 30 else 80) * (maxY / 1000)
+  angle = 0 if len(xIndex) < 30 else 90
   if metric == 'distance':
     annotations = [{
       'x': x,
       'y': y + bump,
       'yref': 'y2',
       'text': f'<b>{distanceFriendly(y, unitPref)}</b>',
-      'showarrow': False
+      'showarrow': False,
+      'textangle': angle,
     } for x, y in zip(xIndex, barTotals)]
   elif metric == 'time':
     annotations = [{
@@ -98,7 +88,8 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
       'y': y + bump,
       'yref': 'y2',
       'text': f'<b>{timeFriendly(y)}</b>',
-      'showarrow': False
+      'showarrow': False,
+      'textangle': angle,
     } for x, y in zip(xIndex, barTotals)]
   elif metric == 'elevation':
     annotations = [{
@@ -106,12 +97,13 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
       'y': y + bump,
       'yref': 'y2',
       'text': f'<b>{elevationFriendly(y, unitPref)}</b>',
-      'showarrow': False
+      'showarrow': False,
+      'textangle': angle,
     } for x, y in zip(xIndex, barTotals)]
   return annotations
 
 def dashboardBarChart(athlete, metric, fromDate, toDate):
-  df = getActivityDataFrame(athlete, metric, fromDate, toDate)
+  df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', metric])
   byDate = df.groupby(by=df.timestamp.dt.date)
   dfByDate = byDate.agg(lambda x : x)[metric]
   maxStacks = byDate.size().max()
@@ -123,7 +115,7 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
   
   for i, level in enumerate(matrix):
     colors = list(map(
-      lambda v, c : c.format('1') if v else 'rgba(0,0,0,0)', 
+      lambda v, c : c.format('1') if v else COLORS['transparent'], 
       level,
       [COLORS[f'run{i % 4}']] * len(xIndex),
     ))
@@ -170,8 +162,6 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
   weeklyTickInfo = getWeeklySpanTickInfo(df, athlete, metric)
   barAnnotations = getBarAnnotations(matrix, athlete.unitPreference, metric, xIndex)
   fig.update_layout(
-    height=400,
-    width=1400,
     paper_bgcolor=COLORS['transparent'],
     plot_bgcolor=COLORS['transparent'],
     margin=dict(
@@ -184,7 +174,7 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
     ),
     barmode='stack',
     bargap=0.1,
-    hovermode='closest',
+    hovermode=False,
     showlegend=False,
     annotations=barAnnotations,
     yaxis2=dict(

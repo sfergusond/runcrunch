@@ -1,17 +1,7 @@
 from django import forms
-from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 
 from utils.convert import CONVERSIONS
-
-metricChoices = [
-  ('distance', 'Distance'),
-  ('time', 'Time'),
-  ('elevation', 'Elevation'),
-  ('pace', 'Pace'),
-  ('heartrate', 'Avg HR'),
-  ('intensity', 'Intensity')
-  ]
 
 def validateTime(value):
   if value >= 60:
@@ -50,22 +40,6 @@ class DateForm(forms.Form):
         'type': "date"
       }
     )
-  )
-
-class HorizRadioRenderer(forms.RadioSelect):
-  def render(self):
-    return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
-
-class MetricPicker(forms.Form):
-  metric = forms.ChoiceField(
-    choices=metricChoices,
-    required=False,
-    widget=forms.RadioSelect(
-      attrs={
-        'style': 'margin-left: 20px;'
-      }
-    ),
-    label='',
   )
 
 class PersonalRecord(forms.Form):
@@ -145,7 +119,6 @@ class PersonalRecord(forms.Form):
     athlete.prDistance = distance
     athlete.prTime = time
     athlete.save()
-    print(athlete.__dict__)
 
 class UnitPreference(forms.Form):
   metric = forms.ChoiceField(
