@@ -186,6 +186,7 @@
 {% block scripts %}
   {% if activity.hasStreams %}
   <script type="text/javascript">
+    console.log('hello');
     const activityJson = JSON.stringify({{ activityJson | safe }});
     {% include 'js/getGraph.js' %}
 
@@ -200,6 +201,7 @@
 
     const profilesTab = document.getElementById('profilesTab')
     profilesTab.addEventListener('click', () => {
+      console.log('hello');
       getGraph('paceElevGraph');
     }, {'once': true});
 
@@ -218,5 +220,6 @@
       getGraph('paceZonesGraph');
       {% endif %}
     }, {'once': true});
+  </script>
   {% endif %}
 {% endblock %}
