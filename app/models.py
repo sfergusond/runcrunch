@@ -70,6 +70,7 @@ class Athlete(models.Model):
     self.save()
     
   def stravaReauthenticate(self):
+    print('Reauthenticating Athlete:', self.__dict__)
     if self.stravaId and time.time() > self.tokenExpiration:
       client = stravalib.Client()
       codes = client.refresh_access_token(
@@ -77,10 +78,12 @@ class Athlete(models.Model):
         settings.STRAVA_CLIENT_SECRET,
         self.refreshToken
       )
+      print('Reauth Codes:', codes)
       self.accessToken = codes['access_token']
       self.refreshToken = codes['refresh_token']
       self.tokenExpiration = codes['expires_at']
       self.save()
+      print('Reauthed Athlete:', self.__dict__)
       
   def getEasyPace(self):
     prPace = self.prDistance / self.prTime
