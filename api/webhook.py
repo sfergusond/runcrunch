@@ -33,13 +33,13 @@ def eventReceiver(request):
           athlete = Athlete.objects.get(stravaId=body['owner_id'])
           print('Webhook Athlete:', athlete.__dict__)
           athlete.stravaReauthenticate()
-          activity = getActivity(athlete, body['object_id'])
-          if activity.type in ALLOWED_ACTIVITY_TYPES:
+          stravaActivity = getActivity(athlete, body['object_id'])
+          if stravaActivity.type in ALLOWED_ACTIVITY_TYPES:
             try:
-              formattedActivity = formatActivity(activity)
+              formattedActivity = formatActivity(stravaActivity)
               activity = Activity.objects.create(athlete=athlete, **formattedActivity)
               activity.save()
-              updatePolyline(activity, athlete)
+              updatePolyline(stravaActivity, athlete)
             except IntegrityError:
               return HttpResponse(status=200)
             except Exception as e:
