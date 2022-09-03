@@ -14,7 +14,7 @@ ALLOWED_ACTIVITY_TYPES = [
   'Run',
   'Walk',
   'Hike',
-  'Trail Run',
+  'TrailRun',
 ]
 
 @csrf_exempt
