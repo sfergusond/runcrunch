@@ -31,6 +31,7 @@ def eventReceiver(request):
         
         if aspectType == 'create':
           athlete = Athlete.objects.get(stravaId=body['owner_id'])
+          print('Webhook Athlete:', athlete.__dict__)
           athlete.stravaReauthenticate()
           activity = getActivity(athlete, body['object_id'])
           if activity.type in ALLOWED_ACTIVITY_TYPES:
