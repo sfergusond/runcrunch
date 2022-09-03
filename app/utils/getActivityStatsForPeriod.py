@@ -36,7 +36,7 @@ def getActivityStatsForPeriod(fromDate, toDate, athlete):
       'time': timeFriendly(time),
       'pace': speedToPace(pace, unitPref),
       'elevation': elevationFriendly(elevation, unitPref),
-      'heartrate': round(heartrate)
+      'heartrate': round(heartrate) if heartrate else ''
     }
     
     return stats
