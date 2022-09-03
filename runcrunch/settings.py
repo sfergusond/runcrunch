@@ -27,6 +27,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'sferg' in os.path.expanduser('~')
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
 CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
@@ -140,6 +141,8 @@ if DEBUG:
   STATIC_URL = '/staticBase/'
   STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
   WHITENOISE_MANIFEST_STRICT = False
+  STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}/'
+  STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
   STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}/'
   STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
