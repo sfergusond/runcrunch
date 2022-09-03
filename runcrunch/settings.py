@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = 'sferg' in os.path.expanduser('~')
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
-CSRF_TRUSTED_ORIGINS = ['www.run-crunch.com']
+CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
 DOMAIN = 'https://XXXX.ngrok.io' if DEBUG else 'https://www.run-crunch.com'
 
 # Application definition
