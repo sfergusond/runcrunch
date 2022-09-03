@@ -17,7 +17,7 @@ def callImporter(request):
   else:
     uploadEndpoint = request.build_absolute_uri(
       reverse('bulkActivityCreate')
-    )
+    ).replace('http:', 'https:')
   payload = {
     'token': request.athlete.accessToken,
     'athleteId': request.athlete.id,

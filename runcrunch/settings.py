@@ -30,8 +30,6 @@ DEBUG = 'sferg' in os.path.expanduser('~')
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
 CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 DOMAIN = 'https://XXXX.ngrok.io' if DEBUG else 'https://www.run-crunch.com'
 
 # Application definition
