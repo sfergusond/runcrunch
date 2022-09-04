@@ -204,7 +204,7 @@ class Activity(models.Model):
     )
     if streams:
       self.hasStreams = True
-      getStream = lambda k : streams.get(k, {}).to_dict().get('data', None)
+      getStream = lambda k : streams.get(k).to_dict().get('data') if streams.get(k) else None
       for type, attrName in streamTypes:
         if type == 'latlng':
           latlngStream = getStream('latlng')
