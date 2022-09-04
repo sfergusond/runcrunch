@@ -27,7 +27,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'sferg' in os.path.expanduser('~')
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
 CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
   'django.contrib.messages',
   'whitenoise.runserver_nostatic',
   'django.contrib.staticfiles',
-  'django.contrib.sites',
+  #'django.contrib.sites',
 
   'app',
   'api',
@@ -90,6 +90,7 @@ WSGI_APPLICATION = 'runcrunch.wsgi.application'
 DATABASES = {
   'default': dj_database_url.config(conn_max_age=600, ssl_require=False)
 }
+DATABASES['default']['NAME'] = 'postgres'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
