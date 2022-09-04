@@ -114,22 +114,7 @@ def getLapsTable(laps, unitPref):
   if not len(df):
     return ''
   
-  df['index'] = df['index'].apply(lambda x : x + 1)
-  df.distance = df.distance.apply(lambda x : distanceFriendly(x, unitPref))
-  df.movingTime = df.movingTime.apply(lambda x : timeFriendly(x))
-  df.velocity = df.velocity.apply(lambda x : speedToPace(x, unitPref))
-  df.adjustedPace = df.adjustedPace.apply(lambda x : speedToPace(x, unitPref))
-  df.heartrate = df.heartrate.apply(lambda x : round(x) if not pd.isna(x) else '')
-  df.intensity = df.intensity.apply(
-    lambda x : f'{round(x)}% ({intensityFriendly(x)})' if not pd.isna(x) else ''
-  )
-  df.totalElevationGain = df.totalElevationGain.apply(lambda x : elevationFriendly(x, unitPref))
-  df.minElevation = df.minElevation.apply(lambda x : elevationFriendly(x, unitPref))
-  df.maxElevation = df.maxElevation.apply(lambda x : elevationFriendly(x, unitPref))
-  df.elevationChange = df.elevationChange.apply(lambda x : elevationFriendly(x, unitPref))
-  df.averageGrade = df.averageGrade.apply(lambda x : gradeFriendly(x))
-  
-  df = df[[
+  colList = [
     'index',
     'distance',
     'movingTime',
@@ -137,12 +122,39 @@ def getLapsTable(laps, unitPref):
     'adjustedPace',
     'heartrate',
     'intensity',
-    'totalElevationGain',
-    'elevationChange',
-    'minElevation',
-    'maxElevation',
-    'averageGrade'
-  ]]
+  ]
+  
+  df['index'] = df['index'].apply(lambda x : x + 1)
+  df.distance = df.distance.apply(lambda x : distanceFriendly(x, unitPref))
+  df.movingTime = df.movingTime.apply(lambda x : timeFriendly(x))
+  df.velocity = df.velocity.apply(lambda x : speedToPace(x, unitPref))
+  df.intensity = df.intensity.apply(
+    lambda x : f'{round(x)}% ({intensityFriendly(x)})' if not pd.isna(x) else ''
+  )
+  if 'heartrate' in df.columns:
+    df.heartrate = df.heartrate.apply(lambda x : round(x) if not pd.isna(x) else '')
+  else:
+    df['heartrate'] = [''] * len(df.distance)
+    colList.remove('heartrate')
+  if 'adjustedPace' in df.columns:
+    df.adjustedPace = df.adjustedPace.apply(lambda x : speedToPace(x, unitPref))
+    df.totalElevationGain = df.totalElevationGain.apply(lambda x : elevationFriendly(x, unitPref))
+    df.minElevation = df.minElevation.apply(lambda x : elevationFriendly(x, unitPref))
+    df.maxElevation = df.maxElevation.apply(lambda x : elevationFriendly(x, unitPref))
+    df.elevationChange = df.elevationChange.apply(lambda x : elevationFriendly(x, unitPref))
+    df.averageGrade = df.averageGrade.apply(lambda x : gradeFriendly(x))
+    colList.extend([
+      'totalElevationGain',
+      'elevationChange',
+      'minElevation',
+      'maxElevation',
+      'averageGrade'
+    ])
+  else:
+    df.adjustedPace = [''] * len(df.distance)
+    colList.remove('adjustedPace')
+  
+  df = df[colList]
   
   dfHtml = df.to_html(index=False, escape=False)
   dfHtml = dfHtml[dfHtml.find('<tbody>') : dfHtml.find('</tbody>')] + '</tbody>'

@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
 CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
-DOMAIN = 'https://XXXX.ngrok.io' if DEBUG else 'https://www.run-crunch.com'
+DOMAIN = 'https://www.run-crunch.com'
 
 # Application definition
 

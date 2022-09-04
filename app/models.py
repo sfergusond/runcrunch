@@ -170,9 +170,9 @@ class Activity(models.Model):
         'endIndex': lap.end_index,
         'time': lap.moving_time.seconds,
         'distance': int(lap.distance),
-        'elevation': int(lap.total_elevation_gain),
+        'elevation': int(lap.total_elevation_gain) if lap.total_elevation_gain else None,
         'velocity': float(lap.average_speed),
-        'heartrate': float(lap.average_heartrate),
+        'heartrate': float(lap.average_heartrate) if lap.average_heartrate else None,
         'index': lap.lap_index
       } for lap in stravaActivity.laps]
     else:

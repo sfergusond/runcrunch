@@ -105,7 +105,10 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
 def dashboardBarChart(athlete, metric, fromDate, toDate):
   df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', metric])
   byDate = df.groupby(by=df.timestamp.dt.date)
-  dfByDate = byDate.agg(lambda x : x)[metric]
+  if len(byDate.sum()) > 1:
+    dfByDate = byDate.agg(lambda x : x)[metric]
+  else:
+    dfByDate = byDate.sum()[metric]
   maxStacks = byDate.size().max()
   xIndex = list(dfByDate.index)
   matrix = getActivityMatrix(dfByDate, maxStacks)
