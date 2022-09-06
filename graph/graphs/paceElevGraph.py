@@ -154,7 +154,7 @@ def paceElevGraph(activity, athlete):
 
   fig.update_layout(
     xaxis=dict(
-      domain=[0,1],
+      range=[0, max(distanceStream)],
       zeroline=False,
       showgrid=False,
       ticks='inside',
@@ -170,7 +170,7 @@ def paceElevGraph(activity, athlete):
       side='right',
       zeroline=False,
       showgrid=False,
-      ticks='outside',
+      ticks='inside',
       ticksuffix='ft' if unitPref == 'I' else 'm',
       showticksuffix='first',
       tickcolor=COLORS['text'],
@@ -187,7 +187,7 @@ def paceElevGraph(activity, athlete):
       showgrid=False,
       tickvals=paceTickInfo,
       ticktext=getPaceHoverInfo(paceTickInfo, unitPref),
-      ticks='outside',
+      ticks='inside',
       tickcolor=COLORS['text'],
       visible=True
     ),
@@ -200,7 +200,7 @@ def paceElevGraph(activity, athlete):
       gridwidth=1,
       gridcolor=COLORS['red'],
       showgrid=False,
-      ticks='outside',
+      ticks='inside',
       ticksuffix='bpm',
       showticksuffix='last',
       tickcolor=COLORS['text'],
@@ -209,25 +209,15 @@ def paceElevGraph(activity, athlete):
   )
 
   # Aesthetic Settings
-  if maxElev < 10:
-      rpad = 55
-  elif maxElev < 1000:
-      rpad = 60
-  elif maxElev < 10000:
-      rpad = 65
-  else:
-      rpad = 70
-
   fig.update_layout(
-    height=500,
     plot_bgcolor=COLORS['transparent'],
     paper_bgcolor=COLORS['transparent'],
     margin=dict(
       pad=0,
       l=0,
-      r=rpad,
+      r=0,
       t=0,
-      b=15,
+      b=0,
       autoexpand=True
     ),
     font=dict(
@@ -253,7 +243,6 @@ def paceElevGraph(activity, athlete):
     include_plotlyjs=False,
     include_mathjax=False,
     full_html=False,
-    default_width='100%',
     config={'displayModeBar': False}
   )
   
