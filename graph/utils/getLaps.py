@@ -66,7 +66,10 @@ def getLapStreams(streams, lap):
 def getDeviceLaps(activity, athlete):
   laps = []
   for lap in activity.get('laps', []):
-    if activity.get('streams'):
+    if (
+      activity.get('streams') and
+      lap['endIndex'] - lap['startIndex'] > 1
+    ):
       lapStreams = getLapStreams(activity['streams'], lap)
       for key, stream in lapStreams.items():
         if key != 'movingStream':
