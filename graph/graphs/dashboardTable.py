@@ -34,7 +34,7 @@ def dashboardTable(fromDate, toDate, athlete):
     lambda x : speedToPace(x, unitPref)
   )
   df.timestamp = df.timestamp.apply(
-    lambda x : x.strftime('%a, %b %d, %Y %I:%M %p')
+    lambda x : x.strftime('%m/%d/%Y %I:%M %p')
   )
   df.distance = df.distance.apply(
     lambda x : distanceFriendly(x, unitPref)
