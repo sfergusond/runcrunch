@@ -37,6 +37,7 @@ COLORS = {
   'VO2 Max': "#fa0c0c",
   'Race':'#fc0dec',
   'Race/Anaerobic':'#fc0dec',
+  'PR Effort': '#fc0dec',
   '': 'rgba(255,255,255,0)'
 }
 
