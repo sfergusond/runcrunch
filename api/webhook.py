@@ -7,7 +7,7 @@ import json
 
 from .utils.getActivity import getActivity
 from .utils.formatActivity import formatActivity
-from .utils.updatePolyline import updatePolyline
+from .utils.updatePolyline import updatePolyline, deletePolyline
 from app.models import Athlete, Activity
 
 ALLOWED_ACTIVITY_TYPES = [
@@ -47,9 +47,23 @@ def eventReceiver(request):
               return HttpResponse(status=500)
             
         elif aspectType == 'update':
-          Activity.objects.filter(
-            stravaId=body['object_id']
-          ).update(**body['updates'])
+          if 'type' in body['updates']:
+            activityType = body['updates']['type']
+            print(activityType)
+            if activityType not in ALLOWED_ACTIVITY_TYPES:
+              athlete = Athlete.objects.get(stravaId=body['owner_id'])
+              activity = Activity.objects.get(stravaId=body['object_id'])
+              try:
+                stravaActivity = getActivity(athlete, activity.stravaId)
+                deletePolyline(stravaActivity, athlete)
+              except Exception as e:
+                print('Polyline Deletion Error:', e)
+              finally:
+                activity.delete()
+          else:
+            Activity.objects.filter(
+              stravaId=body['object_id']
+            ).update(**body['updates'])
         
         elif aspectType == 'delete':
           try:

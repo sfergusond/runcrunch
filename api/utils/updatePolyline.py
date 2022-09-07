@@ -20,16 +20,23 @@ client = boto3.client(
 )
 
 def updatePolyline(activity, athlete):
-  if not activity.map.summary_polyline:
-    print('No Polyline')
-    return
-  key = f'polyline-{athlete.id}.txt'
-  existingPolyline = getOrCreatePolyline(key)
-  newPolyline = r''.join(
-    i if ord(i) > 32 else RAW_MAP.get(ord(i), i) for i in activity.map.summary_polyline
-    )
-  polyline = existingPolyline + newPolyline + r','
-  uploadPolyline(polyline, key)
+  if activity.map.summary_polyline:
+    key = f'polyline-{athlete.id}.txt'
+    existingPolyline = getOrCreatePolyline(key)
+    newPolyline = r''.join(
+      i if ord(i) > 32 else RAW_MAP.get(ord(i), i) for i in activity.map.summary_polyline
+      )
+    polyline = existingPolyline + newPolyline + r','
+    uploadPolyline(polyline, key)
+  
+def deletePolyline(activity, athlete):
+  print(activity)
+  if activity.map.summary_polyline:
+    key = f'polyline-{athlete.id}.txt'
+    existingPolyline = activity.map.summary_polyline + ','
+    polyline = getOrCreatePolyline(key)
+    newPolyline = polyline.replace(existingPolyline, '', 1)
+    uploadPolyline(newPolyline, key)
   
 def getOrCreatePolyline(key):
   try:
