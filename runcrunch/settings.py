@@ -27,9 +27,17 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'sferg' in os.path.expanduser('~')
-# DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'runcrunch.herokuapp.com', 'www.run-crunch.com', '.ngrok.io']
+ALLOWED_HOSTS = [
+  'runcrunch.herokuapp.com',
+  'runcrunch.fly.dev',
+  'www.run-crunch.com'
+]
+if DEBUG:
+  ALLOWED_HOSTS.extend([
+    'localhost',
+    '.ngrok.io'
+  ])
 CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
 DOMAIN = 'https://www.run-crunch.com'
 
@@ -41,7 +49,6 @@ INSTALLED_APPS = [
   'django.contrib.messages',
   'whitenoise.runserver_nostatic',
   'django.contrib.staticfiles',
-  #'django.contrib.sites',
 
   'app',
   'api',
