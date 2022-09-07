@@ -3,6 +3,9 @@
 __secrets__.py
 __docs__/
 
+# Container
+*.env
+
 # SQLite
 *.sqlite3
 
