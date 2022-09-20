@@ -13,17 +13,11 @@ from utils.convert import (
 def getActivityMatrix(df, maxStacks):
   matrix = [ [ 0 ] * len(df.index) for i in range(maxStacks) ] 
   for i, (date, val) in enumerate(df.iteritems()):
-    if 'ndarray' in str(type(val)):
-      for j, v in enumerate(val):
-        if not pd.isna(v):
-          matrix[j][i] = int(v)
-        else:
-          matrix[j][i] = 0
-    else:
-      if not pd.isna(val):
-        matrix[0][i] = int(val)
+    for j, v in enumerate(val):
+      if not pd.isna(v):
+        matrix[j][i] = int(v)
       else:
-        matrix[0][i] = 0
+        matrix[j][i] = 0
   return matrix
 
 def getWeeklySpans(fromDate, toDate):
@@ -105,10 +99,7 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
 def dashboardBarChart(athlete, metric, fromDate, toDate):
   df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', metric])
   byDate = df.groupby(by=df.timestamp.dt.date)
-  if len(byDate.sum()) > 1:
-    dfByDate = byDate.agg(lambda x : x)[metric]
-  else:
-    dfByDate = byDate.sum()[metric]
+  dfByDate = byDate.agg({metric: lambda x : list(x)})[metric]
   maxStacks = byDate.size().max()
   xIndex = list(dfByDate.index)
   matrix = getActivityMatrix(dfByDate, maxStacks)
