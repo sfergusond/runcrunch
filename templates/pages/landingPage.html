@@ -4,7 +4,22 @@
 
 {% block content%}
 
-<div class="row" style="margin-top: 80vh"></div>
+<div class="row justify-content-center" style="margin-top: 3rem;">
+  <h1>Welcome</h1>
+</div>
+
+<div class="row justify-content-center" style="padding: 5rem;">
+  <h3 class="text-center">
+    RunCrunch is a free running log, performance analysis tool, and visualizer. 
+    <br>RunCrunch was created with the goal of providing free and powerful visuals beyond the scope of typical fitness services, while keeping your fitness data easily accessible in an intuitive, interactive user interface.
+  </h3>
+</div>
+
+<div class="row justify-content-center mt-5">
+  <p>To continue, either <a href="{% url 'register' %}">sign up</a> or <a href="{% url 'login' %}">log in</a>.</p>
+</div>
+
+<div class="row" style="margin-top: 25vh"></div>
 
 {% endblock %}
 
