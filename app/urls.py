@@ -9,7 +9,7 @@ urlpatterns = [
     
     path('account', views.account, name='account'),
     path('register', views.register, name='register'),
-    path('connect-to-strava', views.connect_to_strava, name='connect-to-strava'),
+    path('connect-to-strava', views.connect_to_strava, name='connectToStrava'),
     
     path('dashboard', views.dashboard, name='dashboard'),
     path('activity/<int:activityId>', views.viewActivity, name='viewActivity'),

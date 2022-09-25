@@ -68,32 +68,19 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
   bump = (25 if len(xIndex) < 30 else 80) * (maxY / 1000)
   angle = 0 if len(xIndex) < 30 else 90
   if metric == 'distance':
-    annotations = [{
-      'x': x,
-      'y': y + bump,
-      'yref': 'y2',
-      'text': f'<b>{distanceFriendly(y, unitPref)}</b>',
-      'showarrow': False,
-      'textangle': angle,
-    } for x, y in zip(xIndex, barTotals)]
+    getText = lambda x : f'<b>{distanceFriendly(x, unitPref)}</b>'
   elif metric == 'time':
-    annotations = [{
-      'x': x,
-      'y': y + bump,
-      'yref': 'y2',
-      'text': f'<b>{timeFriendly(y)}</b>',
-      'showarrow': False,
-      'textangle': angle,
-    } for x, y in zip(xIndex, barTotals)]
+    getText = lambda x : f'<b>{timeFriendly(x)}</b>'
   elif metric == 'elevation':
-    annotations = [{
-      'x': x,
-      'y': y + bump,
-      'yref': 'y2',
-      'text': f'<b>{elevationFriendly(y, unitPref)}</b>',
-      'showarrow': False,
-      'textangle': angle,
-    } for x, y in zip(xIndex, barTotals)]
+    getText = lambda x : f'<b>{elevationFriendly(x, unitPref)}</b>',
+  annotations = [{
+    'x': x,
+    'y': y + bump,
+    'yref': 'y2',
+    'text': getText(y),
+    'showarrow': False,
+    'textangle': angle,
+  } for x, y in zip(xIndex, barTotals)]
   return annotations
 
 def dashboardBarChart(athlete, metric, fromDate, toDate):

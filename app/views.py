@@ -28,7 +28,7 @@ def register(request):
         )
       login(request, new_user)
       Athlete.objects.create(user=request.user)
-      return redirect('/connect-to-strava')
+      return redirect('connectToStrava')
   else:
       form = UserCreationForm()
   return render(
