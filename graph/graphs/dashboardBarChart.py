@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import datetime
+from django.shortcuts import reverse
 
 from ..utils.constants import COLORS
 from ..utils.getActivityDataFrame import getActivityDataFrame
@@ -62,6 +63,15 @@ def getWeeklySpanTickPoints(df):
     tickPoints.append(point)
   return tickPoints
 
+def getMetricAnnotation(val, metric, unitPref):
+  if metric == 'distance':
+    return distanceFriendly(val, unitPref)
+  elif metric == 'time':
+    return timeFriendly(val)
+  elif metric == 'elevation':
+    return elevationFriendly(val, unitPref)
+  return
+
 def getBarAnnotations(matrix, unitPref, metric, xIndex):
   barTotals = list(map(sum, zip(*matrix)))
   maxY = max(barTotals)
@@ -72,7 +82,7 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
   elif metric == 'time':
     getText = lambda x : f'<b>{timeFriendly(x)}</b>'
   elif metric == 'elevation':
-    getText = lambda x : f'<b>{elevationFriendly(x, unitPref)}</b>',
+    getText = lambda x : f'<b>{elevationFriendly(x, unitPref)}</b>'
   annotations = [{
     'x': x,
     'y': y + bump,
@@ -84,7 +94,8 @@ def getBarAnnotations(matrix, unitPref, metric, xIndex):
   return annotations
 
 def dashboardBarChart(athlete, metric, fromDate, toDate):
-  df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', metric])
+  unitPref = athlete.unitPreference
+  df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', 'id', metric])
   byDate = df.groupby(by=df.timestamp.dt.date)
   dfByDate = byDate.agg({metric: lambda x : list(x)})[metric]
   maxStacks = byDate.size().max()
@@ -100,6 +111,7 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
       level,
       [COLORS[f'run{i % 4}']] * len(xIndex),
     ))
+    hovertext = [getMetricAnnotation(y, metric, unitPref) for y in level]
     fig.add_trace(
       go.Bar(
         name=f'Run {i + 1}',
@@ -107,6 +119,8 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
         y=level,
         xaxis='x2',
         yaxis='y2',
+        hovertext=hovertext,
+        hoverinfo='x+text',
         marker=dict(
           line=dict(
             width=2,
@@ -155,7 +169,7 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
     ),
     barmode='stack',
     bargap=0.1,
-    hovermode=False,
+    hovermode='closest',
     showlegend=False,
     annotations=barAnnotations,
     yaxis2=dict(
