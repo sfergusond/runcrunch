@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import datetime
+from django.shortcuts import reverse
 
 from ..utils.constants import COLORS
 from ..utils.getActivityDataFrame import getActivityDataFrame
@@ -62,42 +63,39 @@ def getWeeklySpanTickPoints(df):
     tickPoints.append(point)
   return tickPoints
 
+def getMetricAnnotation(val, metric, unitPref):
+  if metric == 'distance':
+    return distanceFriendly(val, unitPref)
+  elif metric == 'time':
+    return timeFriendly(val)
+  elif metric == 'elevation':
+    return elevationFriendly(val, unitPref)
+  return
+
 def getBarAnnotations(matrix, unitPref, metric, xIndex):
   barTotals = list(map(sum, zip(*matrix)))
   maxY = max(barTotals)
   bump = (25 if len(xIndex) < 30 else 80) * (maxY / 1000)
   angle = 0 if len(xIndex) < 30 else 90
   if metric == 'distance':
-    annotations = [{
-      'x': x,
-      'y': y + bump,
-      'yref': 'y2',
-      'text': f'<b>{distanceFriendly(y, unitPref)}</b>',
-      'showarrow': False,
-      'textangle': angle,
-    } for x, y in zip(xIndex, barTotals)]
+    getText = lambda x : f'<b>{distanceFriendly(x, unitPref)}</b>'
   elif metric == 'time':
-    annotations = [{
-      'x': x,
-      'y': y + bump,
-      'yref': 'y2',
-      'text': f'<b>{timeFriendly(y)}</b>',
-      'showarrow': False,
-      'textangle': angle,
-    } for x, y in zip(xIndex, barTotals)]
+    getText = lambda x : f'<b>{timeFriendly(x)}</b>'
   elif metric == 'elevation':
-    annotations = [{
-      'x': x,
-      'y': y + bump,
-      'yref': 'y2',
-      'text': f'<b>{elevationFriendly(y, unitPref)}</b>',
-      'showarrow': False,
-      'textangle': angle,
-    } for x, y in zip(xIndex, barTotals)]
+    getText = lambda x : f'<b>{elevationFriendly(x, unitPref)}</b>'
+  annotations = [{
+    'x': x,
+    'y': y + bump,
+    'yref': 'y2',
+    'text': getText(y),
+    'showarrow': False,
+    'textangle': angle,
+  } for x, y in zip(xIndex, barTotals)]
   return annotations
 
 def dashboardBarChart(athlete, metric, fromDate, toDate):
-  df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', metric])
+  unitPref = athlete.unitPreference
+  df = getActivityDataFrame(athlete, fromDate, toDate, ['timestamp', 'id', metric])
   byDate = df.groupby(by=df.timestamp.dt.date)
   dfByDate = byDate.agg({metric: lambda x : list(x)})[metric]
   maxStacks = byDate.size().max()
@@ -113,6 +111,7 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
       level,
       [COLORS[f'run{i % 4}']] * len(xIndex),
     ))
+    hovertext = [getMetricAnnotation(y, metric, unitPref) for y in level]
     fig.add_trace(
       go.Bar(
         name=f'Run {i + 1}',
@@ -120,6 +119,8 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
         y=level,
         xaxis='x2',
         yaxis='y2',
+        hovertext=hovertext,
+        hoverinfo='x+text',
         marker=dict(
           line=dict(
             width=2,
@@ -168,7 +169,7 @@ def dashboardBarChart(athlete, metric, fromDate, toDate):
     ),
     barmode='stack',
     bargap=0.1,
-    hovermode=False,
+    hovermode='closest',
     showlegend=False,
     annotations=barAnnotations,
     yaxis2=dict(

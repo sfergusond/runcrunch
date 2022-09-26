@@ -1,3 +1,4 @@
+import datetime
 from django.urls import reverse
 
 import pandas as pd
@@ -11,13 +12,14 @@ from utils.convert import (
 )
 
 def dashboardTable(fromDate, toDate, athlete):
+  print(toDate)
   unitPref = athlete.unitPreference
   activities = Activity.objects.filter(
     athlete=athlete
   ).filter(
     timestamp__gte=fromDate
   ).filter(
-    timestamp__lte=toDate
+    timestamp__lte=toDate + datetime.timedelta(days=1)
   ).values(
     'id',
     'timestamp',
