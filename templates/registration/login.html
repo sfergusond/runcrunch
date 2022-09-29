@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}RunCrunch - Login{% endblock %}
+
 {% block content %}
 <h1 class="text-center pt-3">Login</h1>
 <div class="row justify-content-center" style="padding-top: 5rem">
@@ -16,6 +17,9 @@
     <input type="hidden" name="user" value="{{ response.user }}"></input>
     <div class="row mt-3">
       <button type="submit" class="btn btn-success btn-block">Login</button>
+    </div>
+    <div class="row mt-2">
+      <a href={% url 'password_reset' %}>Reset password</a>
     </div>
   </form>
 </div>

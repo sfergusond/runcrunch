@@ -1,12 +1,10 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from .forms import DateForm, PersonalRecord, UnitPreference
+from .forms import DateForm, PersonalRecord, UnitPreference, RegisterForm
 from .models import Athlete, Activity
 from .utils.callImporter import callImporter
 from .utils.getActivityStatsForPeriod import getActivityStatsForPeriod
@@ -16,9 +14,14 @@ from graph.utils.getLaps import getLapsTable, getDeviceLaps, getAutoLaps
 import datetime
 import json
 
+def home(request):
+  if request.user.is_authenticated:
+    return redirect(reverse('dashboard'))
+  return render(request, 'pages/landingPage.html')
+
 def register(request):
   if request.method == 'POST':
-    form = UserCreationForm(request.POST)
+    form = RegisterForm(request.POST)
     if form.is_valid():
       form.save()
       username=form.cleaned_data['username']
@@ -30,7 +33,7 @@ def register(request):
       Athlete.objects.create(user=request.user)
       return redirect('connectToStrava')
   else:
-      form = UserCreationForm()
+      form = RegisterForm()
   return render(
     request,
     'pages/register.html',
