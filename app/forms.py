@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
 
 from utils.convert import CONVERSIONS
 
@@ -16,6 +17,11 @@ def validatePos(value):
       message=f'{value} is not positive',
       params={'value': value},
     )
+
+class RegisterForm(UserCreationForm):
+  email = forms.EmailField(
+    required=True
+  )
 
 class DatePicker(forms.DateInput):
   input_type='date'
