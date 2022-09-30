@@ -15,5 +15,8 @@
 {% include 'components/sectionHeader.html' with title='Heatmap' %}
 {% include 'components/figCard.html' with figId='heatmap' %}
 
-<script type="text/javascript">{% include 'js/getHeatmap.js' %}</script>
+<script type="text/javascript">
+  {% include 'js/renderGraph.js' %}
+  {% include 'js/getHeatmap.js' %}
+</script>
 {% endblock %}

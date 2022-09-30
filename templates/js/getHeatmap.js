@@ -12,11 +12,7 @@ const getHeatmap = async (graphElem) => {
     });
     if (res.ok) {
       const html = await res.text();
-      graphElem.innerHTML = html;
-      const scripts = graphElem.getElementsByTagName('script');
-      for (var i = 0; i < scripts.length; i++) {
-        eval(scripts[i].innerHTML);
-      }
+      renderGraph(graphElem, html);
       return true;
     }
     return false;
