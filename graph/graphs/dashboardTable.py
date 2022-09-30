@@ -1,5 +1,5 @@
 import datetime
-from django.urls import reverse
+from django.shortcuts import reverse
 
 import pandas as pd
 
@@ -12,7 +12,6 @@ from utils.convert import (
 )
 
 def dashboardTable(fromDate, toDate, athlete):
-  print(toDate)
   unitPref = athlete.unitPreference
   activities = Activity.objects.filter(
     athlete=athlete
@@ -50,8 +49,12 @@ def dashboardTable(fromDate, toDate, athlete):
   df.averageHr = df.averageHr.apply(
     lambda x : round(x) if not pd.isna(x) else ''
   )
-  df.id = df.id.apply(
-    lambda x : '<a target="_blank" href="' + reverse('viewActivity', args=[x]) + '">View</a>'
+  df.title = df.apply(
+    lambda row : '<a target="_blank" href="{}">{}</a>'.format(
+      reverse('viewActivity', args=[row.id]),
+      row.title
+    ),
+    axis=1
   )
   df = df[[
     'timestamp',
@@ -60,8 +63,7 @@ def dashboardTable(fromDate, toDate, athlete):
     'time',
     'pace',
     'elevation',
-    'averageHr',
-    'id'
+    'averageHr'
   ]]
   
   dfHtml = df.to_html(index=False, escape=False)

@@ -140,18 +140,17 @@
   <div class="col col-auto">
     <div class="card card-stats">
       <div class="card-body">
-          <table id="dashboardTable" class="table table-hover table-striped table-responsive">
-            <thead class="thead-dark">
-              <th data-field="date">Date</th>
-              <th data-field="name">Name</th>
-              <th data-field="distance">Distance</th>
-              <th data-field="time">Time</th>
-              <th data-field="pace">Pace</th>
-              <th data-field="elevation">Elevation</th>
-              <th data-field="avg_hr">Average<br>Heartrate</th>
-              <th data-field="view"></th>
-            </thead>
-          </table>
+        <table id="dashboardTable" class="table table-hover table-striped table-responsive">
+          <thead class="thead-dark">
+            <th data-field="date">Date</th>
+            <th data-field="name">Name</th>
+            <th data-field="distance">Distance</th>
+            <th data-field="time">Time</th>
+            <th data-field="pace">Pace</th>
+            <th data-field="elevation">Elevation</th>
+            <th data-field="avg_hr">Average<br>Heartrate</th>
+          </thead>
+        </table>
       </div>
     </div>
   </div>
@@ -163,8 +162,11 @@
 
 {% block scripts %}
 <script type="text/javascript">
+  {% include 'js/renderGraph.js' %}
   {% include 'js/getDashboardTable.js' %}
   {% include 'js/getDashboardBarChart.js' %}
+
+  getDashboardTable();
 
   getDashboardBarChart('distance');
   const timeTab = document.getElementById('timeTab')
