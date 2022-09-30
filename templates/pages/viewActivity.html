@@ -188,6 +188,7 @@
   <script type="text/javascript">
     console.log('hello');
     const activityJson = JSON.stringify({{ activityJson | safe }});
+    {% include 'js/renderGraph.js' %}
     {% include 'js/getGraph.js' %}
 
     {# Render mini map, main map, 3D model initially #}
