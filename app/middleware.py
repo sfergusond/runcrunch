@@ -10,14 +10,6 @@ def athleteMiddleware(get_response):
       if athlete.stravaId:
         athlete.stravaReauthenticate()
       # print(athlete.__dict__)
-      else:
-        redirectUrl = (
-          'https://www.strava.com/oauth/authorize?' +
-          f'client_id={settings.STRAVA_CLIENT_ID}&' +
-          f'redirect_uri={settings.DOMAIN}/connect-to-strava&' +
-          'approval_prompt=auto&response_type=code&scope=activity%3Aread%2Cactivity%3Aread_all'
-        )
-        return redirect(redirectUrl)
     else:
       request.athlete = None
     response = get_response(request)
