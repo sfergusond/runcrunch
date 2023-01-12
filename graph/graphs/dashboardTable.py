@@ -23,6 +23,7 @@ def dashboardTable(fromDate, toDate, athlete):
     'id',
     'timestamp',
     'title',
+    'type',
     'distance',
     'time',
     'elevation',
@@ -59,6 +60,7 @@ def dashboardTable(fromDate, toDate, athlete):
   df = df[[
     'timestamp',
     'title',
+    'type',
     'distance',
     'time',
     'pace',

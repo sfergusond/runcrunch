@@ -20,9 +20,11 @@ def getActivityStatsForPeriod(fromDate, toDate, athlete):
     timestamp__gte=fromDate
   ).filter(
     timestamp__lte=toDate + datetime.timedelta(days=int(dateIsNotMax))
+  ).filter(
+    type__contains='Run'
   )
   count = activities.count()
-  
+    
   if count:
     distance = activities.aggregate(Sum('distance'))['distance__sum']
     time = activities.aggregate(Sum('time'))['time__sum']
