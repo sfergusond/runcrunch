@@ -70,12 +70,7 @@ def account(request):
     prForm = PersonalRecord(request.POST)
     unitPreference = UnitPreference(request.POST)
     if 'import' in request.POST:
-      # Deny import if too many activities present
-      activityCount = Activity.objects.filter(
-        athlete=request.athlete
-      ).count()
-      if activityCount < 1000:
-        callImporter(request)
+      callImporter(request)
     if 'prForm' in request.POST:
       if prForm.is_valid():
         prForm.save(request.athlete)

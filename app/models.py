@@ -128,6 +128,10 @@ class Activity(models.Model):
   title = models.CharField(
     max_length=500
   )
+  type = models.CharField(
+    max_length=20,
+    default='Run'
+  )
   athlete = models.ForeignKey(
     Athlete,
     on_delete=models.CASCADE

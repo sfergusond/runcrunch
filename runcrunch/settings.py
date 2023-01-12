@@ -39,7 +39,7 @@ if DEBUG:
     '.ngrok.io'
   ])
 CSRF_TRUSTED_ORIGINS = ['https://*.run-crunch.com']
-DOMAIN = 'https://www.run-crunch.com'
+DOMAIN = 'http://fd77-2601-285-8200-acf0-4dad-e6d6-7751-f4a4.ngrok.io' #'https://www.run-crunch.com'
 
 # Application definition
 
