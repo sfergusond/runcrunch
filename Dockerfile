@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED 1
 # install dependencies
 COPY requirements.txt /app/requirements.txt
 RUN apk add g++
-RUN apk --no-cache --update-cache add gfortran
+RUN apk --no-cache --update-cache add gfortran pkg-config
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
