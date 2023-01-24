@@ -14,10 +14,21 @@ from utils.convert import (
   speedToPace,
   distanceFriendly,
   intensityFriendly,
+  speedFriendly,
+  elevationFriendly,
   removeNonMovingFromStream
 )
 from utils.adjustedPace import getPaceMultiplier
 from utils.calculateIntensity import calculateIntensity
+
+AMBULATORY_TYPES = {
+  'Run',
+  'Walk',
+  'TrailRun',
+  'Hike',
+  'Snowshoe',
+  'VirtualRun,'
+}
 
 class Athlete(models.Model):
   stravaId = models.IntegerField(
@@ -138,6 +149,7 @@ class Activity(models.Model):
   )
 
   def getFriendlyStats(self):
+    isAmbulatory = self.isAmbulatory()
     unitPref = self.athlete.unitPreference
     convertImperial = unitPref == 'I'
     client = stravalib.Client(access_token=self.athlete.accessToken)
@@ -152,22 +164,27 @@ class Activity(models.Model):
     
     self.timeFriendly = stravaActivity.moving_time
     
-    self.elevationFriendly = (
-      unithelper.feet(stravaActivity.total_elevation_gain) if convertImperial
-      else round(stravaActivity.total_elevation_gain)
+    self.elevationFriendly = elevationFriendly(
+      stravaActivity.total_elevation_gain.get_num(), 
+      unitPref
     )
     
     if self.hasStreams:
       calculatedPace = statistics.mean(
         removeNonMovingFromStream(self.paceStream, self.movingStream)
       )
-      adjustedPace = statistics.mean(
-        removeNonMovingFromStream(self.adjustedPaceStream, self.movingStream)
-      )
       
-      self.adjustedPaceFriendly = speedToPace(adjustedPace, unitPref)
-      self.paceFriendly = speedToPace(calculatedPace, unitPref)
-      self.intensity = calculateIntensity(self.athlete, adjustedPace, self.distance)
+      if isAmbulatory:
+        adjustedPace = statistics.mean(
+          removeNonMovingFromStream(self.adjustedPaceStream, self.movingStream)
+        )
+        self.paceFriendly = speedToPace(calculatedPace, unitPref)
+        self.adjustedPaceFriendly = speedToPace(adjustedPace, unitPref)
+        self.intensity = calculateIntensity(self.athlete, adjustedPace, self.distance)
+        self.intensityFriendly = intensityFriendly(self.intensity)
+      else:
+        self.paceFriendly = speedFriendly(calculatedPace, unitPref)
+      
         
       self.laps = [{
         'startIndex': lap.start_index,
@@ -180,14 +197,16 @@ class Activity(models.Model):
         'index': lap.lap_index
       } for lap in stravaActivity.laps]
     else:
-      self.paceFriendly = speedToPace(stravaActivity.average_speed, unitPref)
-      self.intensity = calculateIntensity(
-        self.athlete,
-        self.distance / self.time,
-        self.distance
-      )
-      
-    self.intensityFriendly = intensityFriendly(self.intensity)
+      if isAmbulatory:
+        self.paceFriendly = speedToPace(stravaActivity.average_speed, unitPref)
+        self.intensity = calculateIntensity(
+          self.athlete,
+          self.distance / self.time,
+          self.distance
+        )
+        self.intensityFriendly = intensityFriendly(self.intensity)
+      else:
+        self.paceFriendly = speedFriendly(stravaActivity.average_speed, unitPref)
     
   def getStreams(self):
     self.hasStreams = False
@@ -225,7 +244,14 @@ class Activity(models.Model):
         )
     return streams
   
+  def isAmbulatory(self):
+    """
+    Returns true if activity is self-powered on foot (i.e. walks/runs)
+    """
+    return True if self.type in AMBULATORY_TYPES else False
+  
   def toJson(self):
+    self.isAmbulatory()
     serialized = serializers.serialize('json', [self])
     serialized = json.loads(serialized)[0]
     if getattr(self, 'hasStreams', False):
@@ -233,6 +259,7 @@ class Activity(models.Model):
       serialized['streams'] = streams
     if getattr(self, 'laps', False):
       serialized['laps'] = self.laps
+    serialized['isAmbulatory'] = self.isAmbulatory()
     serialized = json.dumps(serialized)
     return serialized
     

@@ -9,7 +9,13 @@ from .models import Athlete, Activity
 from .utils.callImporter import callImporter
 from .utils.getActivityStatsForPeriod import getActivityStatsForPeriod
 from utils.calendar import getNextSunday
-from graph.utils.getLaps import getLapsTable, getDeviceLaps, getAutoLaps
+from graph.utils.getLaps import (
+  getLapsTable,
+  getDeviceLaps,
+  getAutoLaps,
+  getSkiRuns,
+  getSkiRunsTable
+)
 
 import datetime
 import json
@@ -99,6 +105,8 @@ def account(request):
 
 @login_required
 def dashboard(request):
+  toDate = getNextSunday().date()
+  fromDate = toDate - datetime.timedelta(days=20)
   if request.method == 'POST':
     dateForm = DateForm(request.POST)
     if dateForm.is_valid():
@@ -106,8 +114,6 @@ def dashboard(request):
       fromDate = min(formData['fromDate'], formData['toDate'])
       toDate = max(formData['fromDate'], formData['toDate'])
   else:
-    toDate = getNextSunday().date()
-    fromDate = toDate - datetime.timedelta(days=20)
     dateForm = DateForm({
       'fromDate': fromDate,
       'toDate': toDate
@@ -135,14 +141,22 @@ def viewActivity(request, activityId):
   activity = Activity.objects.get(pk=activityId)
   if activity.athlete != request.athlete:
     return HttpResponse(status=403)
+  
   activity.getStreams()
   activity.getFriendlyStats()
   activityJson = activity.toJson()
   activityJsonDict = json.loads(activityJson)
-  autoLaps = getAutoLaps(activityJsonDict, request.athlete)
-  autoLapsTable = getLapsTable(autoLaps, request.athlete.unitPreference)
   deviceLaps = getDeviceLaps(activityJsonDict, request.athlete)
-  deviceLapsTable = getLapsTable(deviceLaps, request.athlete.unitPreference)
+  
+  if activity.isAmbulatory():
+    autoLaps = getAutoLaps(activityJsonDict, request.athlete)
+    deviceLapsTable = getLapsTable(deviceLaps, request.athlete.unitPreference)
+    autoLapsTable = getLapsTable(autoLaps, request.athlete.unitPreference)
+  else:
+    autoLaps = getSkiRuns(activityJsonDict, request.athlete)
+    deviceLapsTable = getSkiRunsTable(deviceLaps, request.athlete.unitPreference)
+    autoLapsTable = getSkiRunsTable(autoLaps, request.athlete.unitPreference)
+      
   return render(
     request,
     'pages/viewActivity.html',

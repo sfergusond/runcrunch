@@ -1,8 +1,14 @@
 import plotly.graph_objects as go
 
-from ..utils.constants import INTENSITYSCALE, INTENSITY_TICK_TEXT, GRADE_SCALE, COLORS
+from ..utils.constants import INTENSITYSCALE, INTENSITY_TICK_TEXT, GRADE_SCALE, COLORS, SPEED_SCALE
 from ..utils.tickInfo import getIntensityTicks
-from ..utils.hoverInfo import getDistanceHoverInfo, getElevationHoverInfo, getGradeHoverInfo, getPaceHoverInfo
+from ..utils.hoverInfo import (
+  getDistanceHoverInfo, 
+  getElevationHoverInfo, 
+  getGradeHoverInfo, 
+  getPaceHoverInfo,
+  getSpeedHoverInfo
+)
 from utils.convert import convertStream
 
 def model3DGraph(activity, athlete):
@@ -12,47 +18,58 @@ def model3DGraph(activity, athlete):
   # Pace Zone Colorbar
   relativePr = athlete.getRelativePrPace(activity['fields']['distance'])
   easyPace = athlete.getEasyPace()
-  paceZones = dict(
-    width=10,
-    color=activity['streams']['paceStream'],
-    cmin=easyPace,
-    cmax=relativePr,
-    showscale=True,
-    colorscale=INTENSITYSCALE,
-    colorbar=dict(
-      thickness=20,
-      x=0,
-      y=0,
-      yanchor='bottom',
-      len=0.7,
-      tickfont=dict(size=8),
-      tickangle=0,
-      tickmode='array',
-      tickvals=getIntensityTicks(easyPace, relativePr),
-      ticktext=INTENSITY_TICK_TEXT
+  if activity['isAmbulatory']:
+    paceZones = dict(
+      width=10,
+      color=activity['streams']['paceStream'],
+      cmin=easyPace,
+      cmax=relativePr,
+      showscale=True,
+      colorscale=INTENSITYSCALE,
+      colorbar=dict(
+        thickness=20,
+        x=0,
+        y=0,
+        yanchor='bottom',
+        len=0.7,
+        tickfont=dict(size=8),
+        tickangle=0,
+        tickmode='array',
+        tickvals=getIntensityTicks(easyPace, relativePr),
+        ticktext=INTENSITY_TICK_TEXT
+      )
     )
-  )
 
-  adjustedPaceZones = dict(
-    width=10,
-    color=activity['streams']['adjustedPaceStream'],
-    cmin=easyPace,
-    cmax=relativePr,
-    showscale=True,
-    colorscale=INTENSITYSCALE,
-    colorbar=dict(
-      thickness=20,
-      x=0,
-      y=0,
-      yanchor='bottom',
-      len=0.7,
-      tickfont=dict(size=8),
-      tickangle=0,
-      tickmode='array',
-      tickvals=getIntensityTicks(easyPace, relativePr),
-      ticktext=INTENSITY_TICK_TEXT
+    adjustedPaceZones = dict(
+      width=10,
+      color=activity['streams']['adjustedPaceStream'],
+      cmin=easyPace,
+      cmax=relativePr,
+      showscale=True,
+      colorscale=INTENSITYSCALE,
+      colorbar=dict(
+        thickness=20,
+        x=0,
+        y=0,
+        yanchor='bottom',
+        len=0.7,
+        tickfont=dict(size=8),
+        tickangle=0,
+        tickmode='array',
+        tickvals=getIntensityTicks(easyPace, relativePr),
+        ticktext=INTENSITY_TICK_TEXT
+      )
     )
-  )
+  else:
+    paceZones = dict(
+      width=10,
+      color=activity['streams']['paceStream'],
+      cmin=min(activity['streams']['paceStream']),
+      cmax=max(activity['streams']['paceStream']),
+      showscale=True,
+      colorscale=SPEED_SCALE
+    )
+    adjustedPaceZones = paceZones
 
   maxGrade = max(activity['streams']['gradeStream'])
   minGrade = min(activity['streams']['gradeStream'])
@@ -90,10 +107,14 @@ def model3DGraph(activity, athlete):
     'metersToMiles' if unitPref == 'I' else 'metersToKm'
   )
   distanceHoverInfo = getDistanceHoverInfo(distanceStream, unitPref)
-  paceHoverInfo = getPaceHoverInfo(activity['streams']['paceStream'], unitPref)
-  adjPaceHoverInfo = getPaceHoverInfo(activity['streams']['adjustedPaceStream'], unitPref)
   elevationHoverInfo = getElevationHoverInfo(elevationStream, unitPref)
   gradeHoverInfo = getGradeHoverInfo(activity['streams']['gradeStream'])
+  if activity['isAmbulatory']:
+    paceHoverInfo = getPaceHoverInfo(activity['streams']['paceStream'], unitPref)
+    adjPaceHoverInfo = getPaceHoverInfo(activity['streams']['adjustedPaceStream'], unitPref)
+  else:
+    paceHoverInfo = getSpeedHoverInfo(activity['streams']['paceStream'], unitPref)
+    adjPaceHoverInfo = [''] * len(activity['streams']['adjustedPaceStream'])
   hoverTemplate = 'Dist: {}<br>Pace: {}<br>Adj. Pace: {}<br>Elev: {}<br>Grade: {}'
   hoverInfo = list(map(
     lambda d, p, ap, e, g : hoverTemplate.format(d, p, ap, e, g),

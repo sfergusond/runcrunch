@@ -37,9 +37,11 @@
           {% include 'components/statCard.html' with title='Elevation' value=activity.elevationFriendly %}
         </div>
         {% endif %}
+        {% if activity.intensity %}
         <div class="col-auto">
           {% include 'components/statCard.html' with title='Intensity' value=activity.intensity|safe|add:'% '|add:'('|add:activity.intensityFriendly|add:')' %}
         </div>
+        {% endif %}
         {% if activity.averageHr %}
         <div class="col-auto">
           {% include 'components/statCard.html' with title='HR' value=activity.averageHr %}
@@ -108,20 +110,7 @@
               <div class="card-body">
                 <div class="table">
                   <table id="auto_lap_table" class="table table-hover table-dark table-striped table-borderless">
-                    <thead class="thead-dark">
-                      <th data-field="lap"><b>Lap</b></th>
-                      <th data-field="distance"><b>Dist</b></th>
-                      <th data-field="Time"><b>Time</b></th>
-                      <th data-field="pace"><b>Pace</b></th>
-                      <th data-field="gap"><b>Adj. Pace</b></th>
-                      <th data-field="hr"><b>HR</b></th>
-                      <th data-field="intensity"><b>Intensity</b></th>
-                      <th data-field="gain"><b>Total<br>Gain</b></th>
-                      <th data-field="elev_change"><b>Elev<br>Change</b></th>
-                      <th data-field="min_elev"><b>Min<br>Elev</b></th>
-                      <th data-field="max_elev"><b>Max<br>Elev</b></th>
-                      <th data-field="avg_grade"><b>Avg<br>Grade</b></th>
-                    </thead>
+                    {% include 'components/lapsTableHeader.html' with activity=activity %}
                     {{ autoLapsTable | safe}}
                   </table>
                 </div>
@@ -145,20 +134,7 @@
               <div class="card-body">
                 <div class="table">
                   <table id="auto_lap_table" class="table table-hover table-dark table-striped table-borderless">
-                    <thead class="thead-dark">
-                      <th data-field="lap"><b>Lap</b></th>
-                      <th data-field="distance"><b>Dist</b></th>
-                      <th data-field="Time"><b>Time</b></th>
-                      <th data-field="pace"><b>Pace</b></th>
-                      <th data-field="gap"><b>Adj. Pace</b></th>
-                      <th data-field="hr"><b>HR</b></th>
-                      <th data-field="intensity"><b>Intensity</b></th>
-                      <th data-field="gain"><b>Total<br>Gain</b></th>
-                      <th data-field="elev_change"><b>Elev<br>Change</b></th>
-                      <th data-field="min_elev"><b>Min<br>Elev</b></th>
-                      <th data-field="max_elev"><b>Max<br>Elev</b></th>
-                      <th data-field="avg_grade"><b>Avg<br>Grade</b></th>
-                    </thead>
+                    {% include 'components/lapsTableHeader.html' with activity=activity %}
                     {{ deviceLapsTable | safe}}
                   </table>
                 </div>

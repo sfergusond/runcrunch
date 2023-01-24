@@ -29,7 +29,6 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = 'sferg' in os.path.expanduser('~')
 
 ALLOWED_HOSTS = [
-  'runcrunch.herokuapp.com',
   'runcrunch.fly.dev',
   'www.run-crunch.com'
 ]

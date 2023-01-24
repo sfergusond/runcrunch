@@ -1,9 +1,9 @@
 import statistics
 import plotly.graph_objects as go
 
-from ..utils.tickInfo import tickInfoStdDev
+from ..utils.tickInfo import tickInfoStdDev, tickInfoReg
 from ..utils.constants import COLORS
-from utils.convert import intensityFriendly, speedToPace  
+from utils.convert import intensityFriendly, speedToPace, speedFriendly 
 
 def lapsBarChart(activity, laps, athlete):
   streams = activity.get('streams')
@@ -19,8 +19,11 @@ def lapsBarChart(activity, laps, athlete):
     sum(lap['distance'] for lap in laps[:i]) for i in range(1, numLaps)
   ]
   barWidths = [lap['distance'] for lap in laps]
-  paceHoverText = [speedToPace(x['velocity'], unitPref) for x in laps]
-  adjPaceHoverText = [speedToPace(x['adjustedPace'], unitPref) for x in laps]
+  if activity['isAmbulatory']:
+    paceHoverText = [speedToPace(x['velocity'], unitPref) for x in laps]
+    adjPaceHoverText = [speedToPace(x['adjustedPace'], unitPref) for x in laps]
+  else:
+    paceHoverText = [speedFriendly(x['velocity'], unitPref) for x in laps]
   gapMarker = dict(
     color=COLORS['orangeT'].format('.3'),
     line=dict(
@@ -54,19 +57,20 @@ def lapsBarChart(activity, laps, athlete):
       visible=hasElev
     )
   )
-  fig.add_trace(
-    go.Bar(
-      x=xIndex,
-      y=[lap['adjustedPace'] for lap in laps],
-      width=barWidths,
-      offset=barOffsets,
-      opacity=.6,
-      hoverinfo='text',
-      hovertext=adjPaceHoverText,
-      marker=gapMarker,
-      visible=False
+  if activity['isAmbulatory']:
+    fig.add_trace(
+      go.Bar(
+        x=xIndex,
+        y=[lap['adjustedPace'] for lap in laps],
+        width=barWidths,
+        offset=barOffsets,
+        opacity=.6,
+        hoverinfo='text',
+        hovertext=adjPaceHoverText,
+        marker=gapMarker,
+        visible=False
+      )
     )
-  )
   fig.add_trace(
     go.Bar(
       x=xIndex,
@@ -81,6 +85,11 @@ def lapsBarChart(activity, laps, athlete):
     )
   )
   avgPace = statistics.mean(streams['paceStream'])
+  paceFriendly = (
+    speedToPace(avgPace, unitPref) 
+    if activity['isAmbulatory'] 
+    else speedFriendly(avgPace, unitPref)
+  )
   fig.add_trace(
     go.Scatter(
       name='Avg Pace',
@@ -94,46 +103,52 @@ def lapsBarChart(activity, laps, athlete):
         color=COLORS['blue']
       ),
       hoverinfo='name+text',
-      hovertext=speedToPace(avgPace, unitPref),
+      hovertext=paceFriendly,
       visible=True
     )
   )
-  adjustedPace = statistics.mean(streams['adjustedPaceStream'])
-  fig.add_trace(
-    go.Scatter(
-      name='Avg. Adj. Pace',
-      x=[0, activity['fields']['distance']],
-      y=[adjustedPace] * 2,
-      mode='lines',
-      line=dict(
-        width=1.5,
-        shape='linear',
-        dash='dash',
-        color=COLORS['orange']
-      ),
-      hoverinfo='name+text',
-      hovertext=speedToPace(adjustedPace, unitPref),
-      visible=True
+  if activity['isAmbulatory']:
+    adjustedPace = statistics.mean(streams['adjustedPaceStream'])
+    fig.add_trace(
+      go.Scatter(
+        name='Avg. Adj. Pace',
+        x=[0, activity['fields']['distance']],
+        y=[adjustedPace] * 2,
+        mode='lines',
+        line=dict(
+          width=1.5,
+          shape='linear',
+          dash='dash',
+          color=COLORS['orange']
+        ),
+        hoverinfo='name+text',
+        hovertext=speedToPace(adjustedPace, unitPref),
+        visible=True
+      )
     )
-  )
 
   # Manipulate Axes
   fig['data'][1].update(yaxis='y2')
   fig['data'][2].update(yaxis='y2')
-  fig['data'][3].update(yaxis='y2')
-  fig['data'][4].update(yaxis='y2')
   fig['data'][1].update(xaxis='x2')
   fig['data'][2].update(xaxis='x2')
+  if activity['isAmbulatory']:
+    fig['data'][3].update(yaxis='y2')
+    fig['data'][4].update(yaxis='y2')
 
   lapTickVals = [
     barOffsets[i] + laps[i]['distance'] / 2 for i in range(numLaps)
   ]
   lapTickText = [str(i + 1) for i in range(numLaps)]
-  paceTickVals = tickInfoStdDev(
-    [l['velocity'] for l in laps],
-    [-4, -2, -2, 0, 2, 4]
-  )
-  paceTickText = [speedToPace(x, unitPref) for x in paceTickVals]
+  if activity['isAmbulatory']:
+    paceTickVals = tickInfoStdDev(
+      [l['velocity'] for l in laps],
+      [-4, -2, -2, 0, 2, 4]
+    )
+    paceTickText = [speedToPace(x, unitPref) for x in paceTickVals]
+  else:
+    paceTickVals = tickInfoReg(l['velocity'] for l in laps)
+    paceTickText = [speedFriendly(x, unitPref) for x in paceTickVals]
   maxElev = max(streams['elevationStream'])
   minElev = min(streams['elevationStream'])
   maxElevGraph = maxElev + ((maxElev - minElev) * .4)

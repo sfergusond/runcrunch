@@ -9,6 +9,14 @@ def tickInfoStdDev(series, spaceList=[-5, -3, -2, -1, 0, 1, 2, 3, 5]):
     ticks = []
   return ticks
 
+def tickInfoReg(series, spaceList=[0, .25, .5, .75, 1]):
+  try:
+    seriesMax = max(series)
+    ticks = [i * seriesMax for i in spaceList]
+  except:
+    ticks = []
+  return ticks
+
 def getIntensityTicks(easyPace, prPace):
   ticks = [
     easyPace, # min

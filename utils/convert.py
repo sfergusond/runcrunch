@@ -2,17 +2,18 @@ import datetime
 from pandas import isna
 
 CONVERSIONS = {
-  'metersToMiles': lambda x: x / 1609.34,
+  'metersToMiles': lambda x : x / 1609.34,
   'metersToFeet': lambda x : x * 3.28084,
-  'metersToKm': lambda x: x / 1000,
-  'secondsToMins': lambda x: x / 60,
+  'metersToKm': lambda x : x / 1000,
+  'secondsToMins': lambda x : x / 60,
+  'secondsToHours': lambda x : x / (60 * 60),
   'kmToMeters': lambda x : x * 1000,
   'milesToMeters': lambda x : x * 1609.34
 }
 
 def convertStream(stream, conversion):
   stream = list(map(lambda x : CONVERSIONS[conversion](x), stream))
-  return stream 
+  return stream
 
 def speedToPace(speed, unitType):
   pace = 0
@@ -31,6 +32,18 @@ def speedToPace(speed, unitType):
       )
   pace = timeFriendly(pace, precision='minutes')
   return pace
+
+def speedFriendly(speed, unitType):
+  if unitType == 'I':
+    speed = CONVERSIONS['metersToMiles'](speed) / (
+      CONVERSIONS['secondsToHours'](1)
+      )
+    return '{:.1f}'.format(speed) + ' mph'
+  else:
+    speed = CONVERSIONS['metersToKm'](speed) / (
+      CONVERSIONS['secondsToHours'](1)
+      )
+    return '{:.1f}'.format(speed) + ' km/h'
     
 def timeFriendly(time, precision='seconds'):
   if isna(time):
@@ -39,6 +52,8 @@ def timeFriendly(time, precision='seconds'):
     timeFriendly = str(datetime.timedelta(seconds=time))
   elif precision == 'minutes':
     timeFriendly = str(datetime.timedelta(minutes=time))
+  elif precision == 'hours':
+    timeFriendly = str(datetime.timedelta(hours=time))
   if '.' in timeFriendly:
     timeFriendly = timeFriendly[:timeFriendly.find('.')]
   if time / (60 if precision == 'seconds' else 1) < 60:
