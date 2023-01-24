@@ -100,7 +100,7 @@ INTENSITY_BINS = [
   math.inf
 ]
 
-GRADE_SCALE =  [
+GRADE_SCALE = [
   [0,'rgb(0,0,131)'],
   [1/6, 'rgb(0,60,170)'],
   [2/6, 'rgb(5,255,255)'],
@@ -117,4 +117,10 @@ GRADE_SCALE_HIST = [
   'rgb(255,255,0)',
   'rgb(250,0,0)',
   'rgb(128,0,0)'
+]
+
+SPEED_SCALE = [
+  [0, 'rgb(157,250,193)'],
+  [0.5, 'rgb(245,237,12)'],
+  [1, 'rgb(255,0,0)'],
 ]

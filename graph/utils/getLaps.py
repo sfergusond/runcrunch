@@ -1,5 +1,9 @@
 import pandas as pd
+import numpy as np
+import csaps
 import statistics
+
+from scipy.signal import argrelextrema
 
 from utils.calculateIntensity import calculateIntensity
 from utils.convert import (
@@ -9,6 +13,7 @@ from utils.convert import (
   intensityFriendly,
   elevationFriendly,
   gradeFriendly,
+  speedFriendly,
   removeNonMovingFromStream
 )
 
@@ -110,7 +115,93 @@ def getAutoLaps(activity, athlete, retIndices=False):
       lap = getLapDetails(lapStreams, athlete)
       laps.append(lap)
     return laps
+  
+def getSkiRuns(activity, athlete, retIndices=False):
+  """
+  Determine break points for laps based on local elev min/max
+  """
+  
+  laps, lapIndices = [], [0]
+  streams = activity['streams']
+  for stream in streams:
+      map(lambda s : removeNonMovingFromStream(s, streams['movingStream'].copy()), stream)
+  elevStream = activity['streams']['elevationStream']
+  indx = np.arange(0, len(elevStream), 1)
+  
+  # Smooth elev stream and find local minima/maxima
+  smoothedStream = csaps.CubicSmoothingSpline(indx, elevStream, smooth=0.001)
+  smoothedStream = smoothedStream(indx)
+  localMaxes = argrelextrema(smoothedStream, np.greater)[0].tolist()
+  localMins = argrelextrema(smoothedStream, np.less)[0].tolist()
+  
+  while localMins or localMaxes:
+    if localMins:
+      nextMin = localMins.pop(0)
+      if nextMin - lapIndices[-1] > 100:
+        lapIndices.append(nextMin)
+    if localMaxes:
+      nextMax = localMaxes.pop(0)
+      if nextMax - lapIndices[-1] > 100:
+        lapIndices.append(nextMax)
       
+  if retIndices:
+    return lapIndices
+  
+  for i in range(len(lapIndices) - 1):
+    lap = {
+      'startIndex': lapIndices[i],
+      'endIndex': lapIndices[i + 1] + 1
+    }
+    lapStreams = getLapStreams(activity['streams'], lap)
+    lap = getLapDetails(lapStreams, athlete)
+    laps.append(lap)
+  
+  return laps
+
+def getSkiRunsTable(runs, unitPref):
+  df = pd.DataFrame(runs)
+  df.reset_index(inplace=True)
+  if not len(df):
+    return ''
+  
+  colList = [
+    'index',
+    'distance',
+    'movingTime',
+    'velocity',
+    'heartrate',
+  ]
+  
+  df['index'] = df['index'].apply(lambda x : x + 1)
+  df.distance = df.distance.apply(lambda x : distanceFriendly(x, unitPref))
+  df.movingTime = df.movingTime.apply(lambda x : timeFriendly(x))
+  df.velocity = df.velocity.apply(lambda x : speedFriendly(x, unitPref))
+  if 'heartrate' in df.columns:
+    df.heartrate = df.heartrate.apply(lambda x : round(x) if not pd.isna(x) else '')
+  else:
+    df['heartrate'] = [''] * len(df.distance)
+    colList.remove('heartrate')
+  if 'minElevation' in df.columns:
+    df.totalElevationGain = df.totalElevationGain.apply(lambda x : elevationFriendly(x, unitPref))
+    df.minElevation = df.minElevation.apply(lambda x : elevationFriendly(x, unitPref))
+    df.maxElevation = df.maxElevation.apply(lambda x : elevationFriendly(x, unitPref))
+    df.elevationChange = df.elevationChange.apply(lambda x : elevationFriendly(x, unitPref))
+    df.averageGrade = df.averageGrade.apply(lambda x : gradeFriendly(x))
+    colList.extend([
+      'totalElevationGain',
+      'elevationChange',
+      'minElevation',
+      'maxElevation',
+      'averageGrade'
+    ])
+    
+  df = df[colList]
+  
+  dfHtml = df.to_html(index=False, escape=False)
+  dfHtml = dfHtml[dfHtml.find('<tbody>') : dfHtml.find('</tbody>')] + '</tbody>'
+  dfHtml = dfHtml.replace('<tr>0</tr>', '<tr></tr>').replace('NaN', '')
+  return dfHtml
+
 def getLapsTable(laps, unitPref):
   df = pd.DataFrame(laps)
   df.reset_index(inplace=True)

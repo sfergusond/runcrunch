@@ -3,12 +3,13 @@ from django.views.decorators.http import require_POST
 
 from app.models import Athlete
 from .utils.getPolyline import getStreamsFromPolyline
-from .utils.getLaps import getDeviceLaps, getAutoLaps
+from .utils.getLaps import getDeviceLaps, getAutoLaps, getSkiRuns
 from .graphs.paceElevGraph import paceElevGraph
 from .graphs.model3DGraph import model3DGraph
 from .graphs.mapThumbnailGraph import mapThumbnail
 from .graphs.annotatedMap import annotatedMap
 from .graphs.paceZonesGraph import paceZonesGraph
+from .graphs.skiSpeedZonesGraph import skiSpeedZonesGraph
 from .graphs.gradeZonesGraph import gradeZonesGraph
 from .graphs.lapsBarChart import lapsBarChart
 from .graphs.dashboardTable import dashboardTable
@@ -54,7 +55,10 @@ def getAnnotatedMap(request):
 def getPaceZonesGraph(request):
   activity = json.loads(request.body)
   athlete = Athlete.objects.get(pk=activity['fields']['athlete'])
-  graph = paceZonesGraph(activity, athlete)
+  if activity['isAmbulatory']:
+    graph = paceZonesGraph(activity, athlete)
+  else:
+    graph = skiSpeedZonesGraph(activity, athlete)
   return HttpResponse(graph)
 
 @require_POST
@@ -84,7 +88,10 @@ def getlapsBarChartDevice(request):
 def getlapsBarChartAuto(request):
   activity = json.loads(request.body)
   athlete = Athlete.objects.get(pk=activity['fields']['athlete'])
-  laps = getAutoLaps(activity, athlete)
+  if activity['isAmbulatory']:
+    laps = getAutoLaps(activity, athlete)
+  else:
+    laps = getSkiRuns(activity, athlete)
   graph = lapsBarChart(activity, laps, athlete)
   return HttpResponse(graph)
 

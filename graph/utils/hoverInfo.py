@@ -1,4 +1,4 @@
-from utils.convert import speedToPace
+from utils.convert import speedToPace, speedFriendly
 
 def getDistanceHoverInfo(stream, unitPref):
   return list(map(
@@ -11,6 +11,9 @@ def getPaceHoverInfo(stream, unitPref):
     stream
   ))
   
+def getSpeedHoverInfo(stream, unitPref):
+  return list(map(lambda x : speedFriendly(x, unitPref), stream))  
+
 def getElevationHoverInfo(stream, unitPref):
   return list(map(
     lambda x : f'{round(x)} ' + ('ft' if unitPref == 'I' else 'm'), stream

@@ -3,12 +3,13 @@ import plotly.graph_objects as go
 import math
 
 from ..utils.constants import COLORS
-from ..utils.tickInfo import tickInfoStdDev
+from ..utils.tickInfo import tickInfoStdDev, tickInfoReg
 from ..utils.hoverInfo import (
   getElevationHoverInfo,
   getPaceHoverInfo,
   getHrHoverInfo,
-  getGradeHoverInfo
+  getGradeHoverInfo,
+  getSpeedHoverInfo
 )
 from utils.convert import convertStream
 
@@ -28,8 +29,12 @@ def paceElevGraph(activity, athlete):
     'metersToMiles' if unitPref == 'I' else 'metersToKm'
   )
   
-  paceHoverInfo = getPaceHoverInfo(paceStream, unitPref)
-  paceTickInfo = tickInfoStdDev(paceStream)
+  if activity['isAmbulatory']:
+    paceHoverInfo = getPaceHoverInfo(paceStream, unitPref)
+    paceTickInfo = tickInfoStdDev(paceStream)
+  else:
+    paceHoverInfo = getSpeedHoverInfo(paceStream, unitPref)
+    paceTickInfo = tickInfoReg(paceStream)
   fig.add_trace(
     go.Scatter(
       name='Pace',
@@ -92,7 +97,7 @@ def paceElevGraph(activity, athlete):
       )
     )
   
-  if adjustedPaceStream:
+  if adjustedPaceStream and activity['isAmbulatory']:
     adjustedPaceHoverInfo = getPaceHoverInfo(adjustedPaceStream, unitPref)
     adjustedPaceTickInfo = tickInfoStdDev(adjustedPaceStream)
     fig.add_trace(
@@ -147,10 +152,15 @@ def paceElevGraph(activity, athlete):
     minElev = min(elevationStream)
   else:
     maxElev, minElev = 0, 0
-  rangePace = [
-    min(paceTickInfo[1], adjustedPaceTickInfo[1]),
-    max(paceTickInfo[-2], adjustedPaceTickInfo[-2])
-  ]
+  if activity['isAmbulatory']:
+    rangePace = [
+      min(paceTickInfo[1], adjustedPaceTickInfo[1]),
+      max(paceTickInfo[-2], adjustedPaceTickInfo[-2])
+    ]
+    paceTickText = getPaceHoverInfo(paceTickInfo, unitPref)
+  else:
+    rangePace = [paceTickInfo[0], paceTickInfo[-1]]
+    paceTickText = getSpeedHoverInfo(paceTickInfo, unitPref)
 
   fig.update_layout(
     xaxis=dict(
@@ -186,7 +196,7 @@ def paceElevGraph(activity, athlete):
       gridcolor=COLORS['blue'],
       showgrid=False,
       tickvals=paceTickInfo,
-      ticktext=getPaceHoverInfo(paceTickInfo, unitPref),
+      ticktext=paceTickText,
       ticks='inside',
       tickcolor=COLORS['text'],
       visible=True
