@@ -9,8 +9,7 @@ ENV PYTHONUNBUFFERED 1
 # install dependencies
 COPY requirements.txt /app/requirements.txt
 RUN apk add g++
-RUN apk --no-cache --update-cache add gfortran python-dev build-base wget freetype-dev libpng-dev openblas-dev
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN apk --no-cache --update-cache add gfortran openblas-dev
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
