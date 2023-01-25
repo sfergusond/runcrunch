@@ -9,7 +9,8 @@ ENV PYTHONUNBUFFERED 1
 # install dependencies
 COPY requirements.txt /app/requirements.txt
 RUN apk add g++
-RUN apk --no-cache --update-cache add gfortran libopenblas-base libatlas3-base python-dev
+RUN apk --no-cache --update-cache add gfortran
+RUN apt-get libopenblas-base libatlas3-base python-dev
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
