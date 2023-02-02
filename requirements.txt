@@ -12,3 +12,4 @@ pandas==1.4.3
 scipy==1.10.0
 csaps==1.1.0
 django_storages==1.10.1
+psutil==5.9.4
