@@ -10,7 +10,6 @@ ENV PYTHONUNBUFFERED 1
 COPY requirements.txt /app/requirements.txt
 RUN apk add g++
 RUN apk --no-cache --update-cache add gfortran openblas-dev
-RUN apk add build-base linux-headers
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 

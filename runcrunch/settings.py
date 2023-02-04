@@ -175,6 +175,7 @@ EMAIL_HOST_USER = 'runcrunch.contact@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ['GMAIL_PW']
 
 IMPORTER_SERVICE_FUNCTION_NAME = 'runcrunch-importer'
+HEATMAP_SERVICE_FUNCTION_NAME = 'heatmap-generator'
 
 # API Credentials
 STRAVA_CLIENT_ID = os.environ['STRAVA_CLIENT_ID']
@@ -183,4 +184,5 @@ AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_REGION_NAME = 'us-east-1'
 AWS_POLYLINE_BUCKET_NAME = 'runcrunch-polyline'
+AWS_HEATMAP_BUCKET_NAME = 'runcrunch-heatmap'
 MAPBOX_TOKEN = os.environ['MAPBOX_TOKEN']
