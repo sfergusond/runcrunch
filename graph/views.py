@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.conf import settings
 from django.views.decorators.http import require_POST
 
 from app.models import Athlete
@@ -16,10 +17,10 @@ from .graphs.dashboardTable import dashboardTable
 from .graphs.dashboardBarChart import dashboardBarChart
 from .graphs.dashboardScheduleChart import dashboardScheduleChart
 from .graphs.trendsBarChart import trendsBarChart
-from .graphs.heatmap import heatmap
 
 import json
 import datetime
+import boto3
 
 @require_POST
 def getPaceElevGraph(request):
@@ -72,8 +73,17 @@ def getGradeZonesGraph(request):
 def getHeatmap(request):
   athleteId = json.loads(request.body)['athlete']
   athlete = Athlete.objects.get(pk=athleteId)
-  latStream, lngStream = getStreamsFromPolyline(athlete)
-  graph = heatmap(latStream, lngStream)
+  client = boto3.client(
+    's3',
+    region_name=settings.AWS_REGION_NAME,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+  )
+  obj = client.get_object(
+    Bucket=settings.AWS_HEATMAP_BUCKET_NAME,
+    Key=f'heatmap-graph-html-{athlete.id}.html'
+  )
+  graph = obj['Body'].read().decode('utf-8')
   return HttpResponse(graph)
 
 @require_POST

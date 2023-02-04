@@ -118,7 +118,7 @@ def getStreamsFromPolyline(athlete):
     body = client.get_object(
       Bucket=settings.AWS_POLYLINE_BUCKET_NAME,
       Key=key
-    )['Body'] #.read().decode('utf-8')
+    )['Body']
     print('RAM Used (GB) getStreams (get body):', psutil.virtual_memory()[3]/1000000000)
   except Exception as e:
     print(e)

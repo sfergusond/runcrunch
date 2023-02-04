@@ -18,6 +18,12 @@ client = boto3.client(
   aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
   aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
 )
+lambdaClient = boto3.client(
+  'lambda',
+  region_name=settings.AWS_REGION_NAME,
+  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+)
 
 def updatePolyline(activity, athlete):
   if activity.map.summary_polyline:
@@ -28,6 +34,14 @@ def updatePolyline(activity, athlete):
       )
     polyline = existingPolyline + newPolyline + r','
     uploadPolyline(polyline, key)
+    payload = {
+      'athleteId': athlete.id
+    }
+    client.invoke(
+      FunctionName=settings.HEATMAP_SERVICE_FUNCTION_NAME,
+      InvocationType='Event',
+      Payload=payload
+    )
   
 def deletePolyline(activity, athlete):
   print(activity)
