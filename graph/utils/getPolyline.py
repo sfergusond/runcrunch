@@ -5,7 +5,6 @@ import itertools
 import six
 import math
 import codecs
-import psutil
 
 RAW_MAP = {
   8:r'\b',
@@ -105,7 +104,6 @@ def encode(coordinates, precision=6, geojson=False):
   return PolylineCodec().encode(coordinates, precision, geojson)
 
 def getStreamsFromPolyline(athlete):  
-  print('RAM Used (GB) getStreams (start):', psutil.virtual_memory()[3]/1000000000)
   polyline = ''
   client = boto3.client(
     's3',
@@ -119,14 +117,12 @@ def getStreamsFromPolyline(athlete):
       Bucket=settings.AWS_POLYLINE_BUCKET_NAME,
       Key=key
     )['Body']
-    print('RAM Used (GB) getStreams (get body):', psutil.virtual_memory()[3]/1000000000)
   except Exception as e:
     print(e)
     raise e
   
   for chunk in codecs.getreader('utf-8')(body):
     polyline += chunk
-  print('RAM Used (GB) getStreams (after chunks):', psutil.virtual_memory()[3]/1000000000)
   
   latStream, lngStream = [], []
   polylineTraces = polyline.split(',')
@@ -138,7 +134,5 @@ def getStreamsFromPolyline(athlete):
     if decoded:
       latStream += list(map(lambda x : x[0], decoded))
       lngStream += list(map(lambda x : x[1], decoded))
-      
-  print('RAM Used (GB) getStreams (before return):', psutil.virtual_memory()[3]/1000000000)
-  
+        
   return latStream, lngStream
