@@ -1,6 +1,7 @@
 from django.conf import settings
 
 import boto3
+import json
 
 RAW_MAP = {
   8:r'\b',
@@ -34,9 +35,12 @@ def updatePolyline(activity, athlete):
       )
     polyline = existingPolyline + newPolyline + r','
     uploadPolyline(polyline, key)
-    payload = {
+    
+    # Call Lambda func to update stored heatmap graph HTML
+    invokeArgs = {
       'athleteId': athlete.id
     }
+    payload = json.dumps(invokeArgs).encode('utf-8')
     lambdaClient.invoke(
       FunctionName=settings.HEATMAP_SERVICE_FUNCTION_NAME,
       InvocationType='Event',
