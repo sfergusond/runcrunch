@@ -37,7 +37,7 @@ def updatePolyline(activity, athlete):
     payload = {
       'athleteId': athlete.id
     }
-    client.invoke(
+    lambdaClient.invoke(
       FunctionName=settings.HEATMAP_SERVICE_FUNCTION_NAME,
       InvocationType='Event',
       Payload=payload
