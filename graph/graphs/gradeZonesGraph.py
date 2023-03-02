@@ -4,13 +4,19 @@ import numpy as np
 import math
 
 from ..utils.constants import COLORS, GRADE_SCALE_HIST
-from utils.convert import CONVERSIONS
+from utils.convert import CONVERSIONS, removeUphillFromStream
 
 def gradeZonesGraph(activity, athlete):
   
   fig = go.Figure()
   
   # Create Distribution
+  if not activity['isAmbulatory']:
+    activity['streams']['gradeStream'] = list(
+      filter(
+        lambda x: x < 0, activity['streams']['gradeStream']
+      )
+    )
   df = pd.DataFrame(activity['streams'], columns=['gradeStream'])
   df['gradeStream'] = list(map(lambda g : round(g), df['gradeStream']))
   xVals = [i for i in range(min(df['gradeStream']), max(df['gradeStream']))]
