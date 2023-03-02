@@ -124,3 +124,9 @@ def removeNonMovingFromStream(stream, movingStream):
     point for point, moving in zip(stream, movingStream) if moving
   ]
   return nonMovingStream
+
+def removeUphillFromStream(stream, gradeStream):
+  downhillStream = [
+    point for point, grade in zip(stream, gradeStream) if grade < 0
+  ]
+  return downhillStream

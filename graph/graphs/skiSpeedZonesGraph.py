@@ -4,7 +4,7 @@ import numpy as np
 import math
 
 from ..utils.constants import COLORS
-from utils.convert import CONVERSIONS
+from utils.convert import CONVERSIONS, removeNonMovingFromStream, removeUphillFromStream
 
 def skiSpeedZonesGraph(activity, athlete):
   
@@ -12,7 +12,10 @@ def skiSpeedZonesGraph(activity, athlete):
   fig = go.Figure()
   
   # Create Distribution
-  df = pd.DataFrame(activity['streams'], columns=['paceStream'])
+  paceStream = removeNonMovingFromStream(activity['streams']['paceStream'], activity['streams']['movingStream'])
+  gradeStream = removeNonMovingFromStream(activity['streams']['gradeStream'], activity['streams']['movingStream'])
+  paceStream = removeUphillFromStream(paceStream, gradeStream)
+  df = pd.DataFrame(paceStream, columns=['paceStream'])
   df['paceStream'] = list(map(lambda s : round(s), df['paceStream']))
   if unitPref == 'I':
     convertedStream = list(map(
