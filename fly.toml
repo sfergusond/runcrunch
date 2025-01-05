@@ -4,6 +4,7 @@ app = "runcrunch"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
+primary_region = "iad"
 
 [env]
   PORT = "8080"
