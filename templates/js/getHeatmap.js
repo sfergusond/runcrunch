@@ -10,12 +10,17 @@ const getHeatmap = async (graphElem) => {
         'athlete': {{ request.athlete.id }}
       })
     });
-    if (res.ok) {
-      const html = await res.text();
-      renderGraph(graphElem, html);
-      return true;
+    if (!res.ok) {
+      return false
     }
-    return false;
+
+    var html = "";
+    for await (const chunk of res.body.values()) {
+        html += String.fromCharCode.apply(null, chunk)
+    }
+
+    renderGraph(graphElem, html);
+    return true;
   }
   catch (err) {
     console.log(err);

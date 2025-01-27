@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.conf import settings
 from django.views.decorators.http import require_POST
 
@@ -69,22 +69,32 @@ def getGradeZonesGraph(request):
   graph = gradeZonesGraph(activity, athlete)
   return HttpResponse(graph)
 
+def stream_s3_data(data):
+  chunk_size = 1024
+  while True:
+    chunk = data['Body'].read(chunk_size)
+    if not chunk:
+      return ""
+    yield chunk.decode('utf-8')
+
 @require_POST
 def getHeatmap(request):
   athleteId = json.loads(request.body)['athlete']
   athlete = Athlete.objects.get(pk=athleteId)
+  
   client = boto3.client(
     's3',
     region_name=settings.AWS_REGION_NAME,
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
   )
+  
   obj = client.get_object(
     Bucket=settings.AWS_HEATMAP_BUCKET_NAME,
     Key=f'heatmap-graph-html-{athlete.id}.html'
   )
-  graph = obj['Body'].read().decode('utf-8')
-  return HttpResponse(graph)
+  
+  return StreamingHttpResponse(stream_s3_data(obj), content_type="text/event-stream")
 
 @require_POST
 def getlapsBarChartDevice(request):
