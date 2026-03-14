@@ -27,25 +27,27 @@ lambdaClient = boto3.client(
 )
 
 def updatePolyline(activity, athlete):
-  if activity.map.summary_polyline:
-    key = f'polyline-{athlete.id}.txt'
-    existingPolyline = getOrCreatePolyline(key)
-    newPolyline = r''.join(
-      i if ord(i) > 32 else RAW_MAP.get(ord(i), i) for i in activity.map.summary_polyline
-      )
-    polyline = existingPolyline + newPolyline + r','
-    uploadPolyline(polyline, key)
-    
-    # Call Lambda func to update stored heatmap graph HTML
-    invokeArgs = {
-      'athleteId': athlete.id
-    }
-    payload = json.dumps(invokeArgs).encode('utf-8')
-    lambdaClient.invoke(
-      FunctionName=settings.HEATMAP_SERVICE_FUNCTION_NAME,
-      InvocationType='Event',
-      Payload=payload
+  if not activity.map.summary_polyline:
+    return
+  
+  key = f'polyline-{athlete.id}.txt'
+  existingPolyline = getOrCreatePolyline(key)
+  newPolyline = r''.join(
+    i if ord(i) > 32 else RAW_MAP.get(ord(i), i) for i in activity.map.summary_polyline
     )
+  polyline = existingPolyline + newPolyline + r','
+  uploadPolyline(polyline, key)
+  
+  # Call Lambda func to update stored heatmap graph HTML
+  invokeArgs = {
+    'athleteId': athlete.id
+  }
+  payload = json.dumps(invokeArgs).encode('utf-8')
+  lambdaClient.invoke(
+    FunctionName=settings.HEATMAP_SERVICE_FUNCTION_NAME,
+    InvocationType='Event',
+    Payload=payload
+  )
   
 def deletePolyline(activity, athlete):
   print(activity)
