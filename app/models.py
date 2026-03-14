@@ -18,7 +18,7 @@ from utils.convert import (
   elevationFriendly,
   removeNonMovingFromStream
 )
-from utils.adjustedPace import getPaceMultiplier
+from utils.adjustedPace import getAltitudeMultiplier, adjustedVelocity
 from utils.calculateIntensity import calculateIntensity
 
 AMBULATORY_TYPES = {
@@ -238,8 +238,8 @@ class Activity(models.Model):
       if {'grade_smooth', 'velocity_smooth', 'altitude'}.issubset(streams.keys()):
         self.adjustedPaceStream = list(
           map(
-            lambda g, v, e : getPaceMultiplier(g, e) * v,
-            self.gradeStream, self.paceStream, self.elevationStream
+            lambda g, v, e: adjustedVelocity(g, v) * getAltitudeMultiplier(e),
+            self.gradeStream, self.paceStream , self.elevationStream
           )
         )
     return streams

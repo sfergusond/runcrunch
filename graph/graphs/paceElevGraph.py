@@ -112,7 +112,7 @@ def paceElevGraph(activity, athlete):
         line=dict(
           width=2,
           shape='spline',
-          smoothing=1.1,
+          smoothing=1.3,
           color=COLORS['orange'],
           simplify=True
         ),
