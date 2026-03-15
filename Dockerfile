@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED 1
 COPY requirements.txt /app/requirements.txt
 RUN apk add g++
 RUN apk --no-cache --update-cache add gfortran openblas-dev
-RUN pip install --force-reinstall setuptools==81.0.0
+RUN pip install --force-reinstall setuptools==80.0.0
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
