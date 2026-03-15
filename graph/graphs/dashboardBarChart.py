@@ -13,7 +13,7 @@ from utils.convert import (
 
 def getActivityMatrix(df, maxStacks):
   matrix = [ [ 0 ] * len(df.index) for i in range(maxStacks) ] 
-  for i, (date, val) in enumerate(df.iteritems()):
+  for i, (_, val) in enumerate(df.items()):
     for j, v in enumerate(val):
       if not pd.isna(v):
         matrix[j][i] = int(v)
@@ -40,7 +40,7 @@ def getWeeklySpans(fromDate, toDate):
 
 def getWeeklySpanTickInfo(df, athlete, metric):
   unitPref = athlete.unitPreference
-  dfByWeek = df.groupby(by=df.timestamp.dt.strftime('%Y-%W')).sum()
+  dfByWeek = df.groupby(by=df.timestamp.dt.strftime('%Y-%W')).sum(numeric_only=True)
   if metric == 'distance':
     tickInfo = list(map(
       lambda x : f'<b>{distanceFriendly(x, unitPref)}</b>', dfByWeek['distance']
